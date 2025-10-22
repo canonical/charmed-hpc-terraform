@@ -1,8 +1,13 @@
-# TF specifc ignores
+# TF specific ignores
 
 .terraform
 .terraform.lock.hcl
 *.tfstate*
+
+# Terragrunt specific ignores
+.terragrunt-cache
+examples/**/provider_*.tf
+examples/**/versions.tf
 
 # IDE specific ignores
 .idea

@@ -49,6 +49,8 @@ validate *modules: (init modules)
 fmt:
     just --fmt --unstable
     tofu fmt -recursive
+    @echo "Formatting Terragrunt files..."
+    @find examples -name "*.hcl" -type f -exec terragrunt hclfmt {} \; 2>/dev/null || echo "Note: terragrunt not found, skipping HCL formatting"
 
 # Clean project directory
 [group("dev")]
@@ -56,6 +58,9 @@ clean:
     find . -name .terraform -type d | xargs rm -rf
     find . -name .terraform.lock.hcl -type f | xargs rm -rf
     find . -name "terraform.tfstate*" -type f | xargs rm -rf
+    find . -name ".terragrunt-cache" -type d | xargs rm -rf
+    find examples -name "provider_*.tf" -type f | xargs rm -rf
+    find examples -name "versions.tf" -type f | xargs rm -rf
 
 # Show available recipes
 help:
