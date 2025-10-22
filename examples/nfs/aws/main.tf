@@ -1,20 +1,3 @@
-terraform {
-  required_providers {
-    juju = {
-      source  = "juju/juju"
-      version = ">= 0.19.0"
-    }
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~>5.99"
-    }
-  }
-}
-
-provider "juju" {}
-
-provider "aws" {}
-
 # ==== Controller VPC information ====
 
 variable "controller_vpc_id" {

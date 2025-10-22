@@ -1,14 +1,3 @@
-terraform {
-  required_providers {
-    juju = {
-      source  = "juju/juju"
-      version = ">= 0.19.0"
-    }
-  }
-}
-
-provider "juju" {}
-
 resource "juju_model" "charmed-hpc" {
   name = "charmed-hpc"
 }

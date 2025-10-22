@@ -6,7 +6,7 @@ The [`modules`](./modules) directory contains modules that make use of the
 [Juju Terraform Provider](https://github.com/juju/terraform-provider-juju) to interact with a
 previously bootstrapped [Juju](https://juju.is) controller.
 
-Furthermore, the [`examples`](./examples) directory offers example deployments that can be copy-pasted
+Furthermore, the [`examples`](./examples) directory offers example deployments using Terragrunt that can be copy-pasted
 to kickstart your own deployments.
 
 ## ✨ Getting started

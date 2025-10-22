@@ -1,22 +1,3 @@
-terraform {
-  required_providers {
-    juju = {
-      source  = "juju/juju"
-      version = ">= 0.19.0"
-    }
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "~>4.17"
-    }
-  }
-}
-
-provider "juju" {}
-
-provider "azurerm" {
-  features {}
-}
-
 resource "azurerm_resource_group" "nfs-group" {
   name     = "nfs-group"
   location = "East US"

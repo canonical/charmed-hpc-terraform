@@ -1,20 +1,3 @@
-terraform {
-  required_providers {
-    juju = {
-      source  = "juju/juju"
-      version = ">= 0.19.0"
-    }
-    google = {
-      source  = "hashicorp/google"
-      version = "~>6.41"
-    }
-  }
-}
-
-provider "juju" {}
-
-provider "google" {}
-
 data "google_client_config" "current" {}
 
 # ==== Juju resources ====

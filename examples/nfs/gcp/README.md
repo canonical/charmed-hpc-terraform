@@ -9,6 +9,6 @@ deploying resources in GCP, read the [Usage section in modules/nfs/gcp/README.md
 To run this example, execute:
 
 ```bash
-terraform init
-terraform apply
+terragrunt init
+terragrunt apply
 ```

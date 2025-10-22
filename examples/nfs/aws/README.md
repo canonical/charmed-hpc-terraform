@@ -10,10 +10,10 @@ deploying resources in AWS, read the [Usage section in modules/nfs/aws/README.md
 |-------------------|------------------------------------------------------------------|
 | controller_vpc_id | VPC ID where the Juju controller for the AWS cloud is allocated. |
 
-Any variable can be set using environment variables:
+Any variable can be set using Terragrunt environment variables:
 
 ```bash
-export TF_VAR_<variable_name>=<variable-value>
+export TG_VAR_<variable_name>=<variable-value>
 ```
 
 The VPC ID of the controller can be obtained by getting the configuration for the controller model
@@ -30,7 +30,7 @@ Otherwise, the ID for the default VPC can be obtained through [AWS][aws-guide].
 Finally, the `controller_vpc_id` variable can be provided using environment variables:
 
 ```bash
-export TF_VAR_controller_vpc_id=vpc-xxxxxxxxxxxxxx
+export TG_VAR_controller_vpc_id=vpc-xxxxxxxxxxxxxx
 ```
 
 ## Usage
@@ -38,8 +38,8 @@ export TF_VAR_controller_vpc_id=vpc-xxxxxxxxxxxxxx
 To run this example, execute:
 
 ```bash
-terraform init
-terraform apply
+terragrunt init
+terragrunt apply
 ```
 
 ## Permissions
