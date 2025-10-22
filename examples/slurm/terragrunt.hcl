@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Include the root terragrunt.hcl configuration
+# Include the root configuration
 include "root" {
-  path = find_in_parent_folders()
+  path = find_in_parent_folders("root.hcl")
 }
 
 # Specify the Terraform source
@@ -34,6 +34,8 @@ terraform {
       version = ">= 0.19.0"
     }
   }
+  
+  backend "local" {}
 }
 EOF
 }

@@ -12,14 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Root terragrunt.hcl for examples
+# Root configuration for examples
 # This file contains common configuration shared across all examples
-
-# Configure Terragrunt to automatically store tfstate files in the current directory
-remote_state {
-  backend = "local"
-  config  = {}
-}
 
 # Generate provider configuration that is common across all examples
 generate "provider_juju" {
