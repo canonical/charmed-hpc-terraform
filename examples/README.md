@@ -8,7 +8,7 @@ The examples are organized using Terragrunt to keep configurations DRY (Don't Re
 
 ```
 examples/
-├── terragrunt.hcl          # Root configuration with common settings
+├── root.hcl                # Root configuration with common settings
 ├── nfs/
 │   ├── aws/
 │   │   ├── terragrunt.hcl  # AWS-specific Terragrunt config
