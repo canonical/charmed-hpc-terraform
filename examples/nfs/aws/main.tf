@@ -152,7 +152,7 @@ resource "juju_model" "charmed-hpc" {
 }
 
 module "nfs-share" {
-  source     = "git::https://github.com/charmed-hpc/charmed-hpc-terraform//modules/nfs/aws"
+  source     = "git::https://github.com/canonical/charmed-hpc-terraform//modules/nfs/aws"
   name       = "nfs-share"
   vpc_id     = module.nfs-vpc.vpc_id
   subnet_id  = module.nfs-vpc.private_subnets[0]
