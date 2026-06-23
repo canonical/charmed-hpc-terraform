@@ -92,7 +92,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "nfs" {
 }
 
 module "nfs-server-proxy" {
-  source = "git::https://github.com/charmed-hpc/filesystem-charms//charms/nfs-server-proxy/terraform"
+  source = "git::https://github.com/canonical/filesystem-charms//charms/nfs-server-proxy/terraform"
 
   app_name   = "${var.name}-server"
   model_name = var.model_name
@@ -108,7 +108,7 @@ module "nfs-server-proxy" {
 }
 
 module "filesystem-client" {
-  source = "git::https://github.com/charmed-hpc/filesystem-charms//charms/filesystem-client/terraform"
+  source = "git::https://github.com/canonical/filesystem-charms//charms/filesystem-client/terraform"
 
   app_name   = "${var.name}-client"
   model_name = var.model_name

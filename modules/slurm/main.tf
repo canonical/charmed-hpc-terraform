@@ -24,7 +24,7 @@ data "juju_application" "mysql" {
 # Setup control plane
 
 module "slurmctld" {
-  source = "git::https://github.com/charmed-hpc/slurm-charms//charms/slurmctld/terraform"
+  source = "git::https://github.com/canonical/slurm-charms//charms/slurmctld/terraform"
 
   model_name  = data.juju_model.this.name
   app_name    = var.controller.app_name
@@ -35,7 +35,7 @@ module "slurmctld" {
 }
 
 module "slurmdbd" {
-  source = "git::https://github.com/charmed-hpc/slurm-charms//charms/slurmdbd/terraform"
+  source = "git::https://github.com/canonical/slurm-charms//charms/slurmdbd/terraform"
 
   model_name  = data.juju_model.this.name
   app_name    = var.database.app_name
@@ -46,7 +46,7 @@ module "slurmdbd" {
 }
 
 module "slurmrestd" {
-  source = "git::https://github.com/charmed-hpc/slurm-charms//charms/slurmrestd/terraform"
+  source = "git::https://github.com/canonical/slurm-charms//charms/slurmrestd/terraform"
 
   model_name  = data.juju_model.this.name
   app_name    = var.rest_api.app_name
@@ -57,7 +57,7 @@ module "slurmrestd" {
 }
 
 module "sackd" {
-  source = "git::https://github.com/charmed-hpc/slurm-charms//charms/sackd/terraform"
+  source = "git::https://github.com/canonical/slurm-charms//charms/sackd/terraform"
 
   model_name  = data.juju_model.this.name
   app_name    = var.kiosk.app_name
@@ -127,7 +127,7 @@ resource "juju_integration" "slurmdbd-to-mysql" {
 
 module "slurmd_partitions" {
   for_each = var.compute_partitions
-  source   = "git::https://github.com/charmed-hpc/slurm-charms//charms/slurmd/terraform"
+  source   = "git::https://github.com/canonical/slurm-charms//charms/slurmd/terraform"
 
   model_name  = data.juju_model.this.name
   app_name    = each.key

@@ -48,7 +48,7 @@ module "mysql" {
 }
 
 module "slurm" {
-  source = "git::https://github.com/charmed-hpc/charmed-hpc-terraform//modules/slurm"
+  source = "git::https://github.com/canonical/charmed-hpc-terraform//modules/slurm"
 
   model_name = juju_model.charmed-hpc.name
   database_backend = {
@@ -105,8 +105,7 @@ tofu apply -auto-approve
 To learn more about the deployment and use of a Charmed HPC cluster, the following resources are available:
 
 * [Charmed HPC Documentation](https://canonical-charmed-hpc.readthedocs-hosted.com/latest)
-* [Open an issue](https://github.com/charmed-hpc/charmed-hpc-terraform/issues/new?title=ISSUE+TITLE&body=*Please+describe+your+issue*)
-* [Ask a question on the Charmed HPC GitHub](https://github.com/orgs/charmed-hpc/discussions/categories/q-a)
+* [Open an issue](https://github.com/canonical/charmed-hpc-terraform/issues/new?title=ISSUE+TITLE&body=*Please+describe+your+issue*)
 
 ## 🛠️ Development
 
@@ -128,7 +127,6 @@ Here’s some links to help you get started with joining the community:
 * [Contributing guidelines](./CONTRIBUTING.md)
 * [Join the conversation on Matrix](https://matrix.to/#/#hpc:ubuntu.com)
 * [Get the latest news on Discourse](https://discourse.ubuntu.com/c/hpc/151)
-* [Ask and answer questions on GitHub](https://github.com/orgs/charmed-hpc/discussions/categories/q-a)
 
 ## 📋 License
 

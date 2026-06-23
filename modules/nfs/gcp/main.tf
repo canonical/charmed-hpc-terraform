@@ -51,7 +51,7 @@ resource "juju_application" "nfs-server-proxy" {
 }
 
 module "filesystem-client" {
-  source = "git::https://github.com/charmed-hpc/filesystem-charms//charms/filesystem-client/terraform"
+  source = "git::https://github.com/canonical/filesystem-charms//charms/filesystem-client/terraform"
 
   app_name   = "${var.name}-client"
   model_name = var.model_name

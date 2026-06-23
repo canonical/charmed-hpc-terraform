@@ -64,7 +64,7 @@ module "efs" {
   }
 }
 
-// TODO: Modify https://github.com/charmed-hpc/filesystem-charms//charms/filesystem-client/terraform
+// TODO: Modify https://github.com/canonical/filesystem-charms//charms/filesystem-client/terraform
 // so that it allows machine placement.
 resource "juju_machine" "nfs-server-proxy" {
   model     = var.model_name
@@ -91,7 +91,7 @@ resource "juju_application" "nfs-server-proxy" {
 }
 
 module "filesystem-client" {
-  source = "git::https://github.com/charmed-hpc/filesystem-charms//charms/filesystem-client/terraform"
+  source = "git::https://github.com/canonical/filesystem-charms//charms/filesystem-client/terraform"
 
   app_name   = "${var.name}-client"
   model_name = var.model_name
