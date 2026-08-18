@@ -9,7 +9,13 @@ terraform {
   }
 }
 
-provider "juju" {}
+provider "juju" {
+  controller_addresses = var.connection != null ? var.connection.controller_addresses : null
+  username             = var.connection != null ? var.connection.username : null
+  password             = var.connection != null ? var.connection.password : null
+  ca_certificate       = var.connection != null ? var.connection.ca_certificate : null
+  skip_failed_deletion = true
+}
 
 resource "juju_model" "charmed-hpc" {
   name = "charmed-hpc"

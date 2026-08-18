@@ -13,7 +13,13 @@ terraform {
   }
 }
 
-provider "juju" {}
+provider "juju" {
+  controller_addresses = var.connection != null ? var.connection.controller_addresses : null
+  username             = var.connection != null ? var.connection.username : null
+  password             = var.connection != null ? var.connection.password : null
+  ca_certificate       = var.connection != null ? var.connection.ca_certificate : null
+  skip_failed_deletion = true
+}
 
 provider "azurerm" {
   features {}
@@ -81,7 +87,7 @@ resource "juju_machine" "lustre-server" {
   model_uuid  = juju_model.charmed-hpc.uuid
   base        = "ubuntu@26.04"
   constraints = "instance-type=${var.server_vm_size}"
-  placement   = azurerm_subnet.lustre-subnet.name
+  placement   = "subnet=${azurerm_subnet.lustre-subnet.name}"
 }
 
 module "lustre-share" {

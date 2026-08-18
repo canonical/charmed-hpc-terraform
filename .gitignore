@@ -3,6 +3,7 @@
 .terraform
 .terraform.lock.hcl
 *.tfstate*
+.terragrunt-cache
 
 # IDE specific ignores
 .idea
