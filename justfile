@@ -16,46 +16,56 @@ set unstable
 set lists
 
 project_dir := justfile_directory()
-modules_dir := project_dir / "modules"
-default_module_list := shell("ls -d -- $1/*", modules_dir)
+default_root_list := shell("find $1 -name '*.tf' -not -path '*/.terraform/*' -not -path '*/.terragrunt-cache/*' -not -path '*/terragrunt/*' -printf '%h\\n' | sort -u | tr '\\n' ' '", project_dir / "examples")
+default_stack_list := shell("find $1 -mindepth 2 -maxdepth 3 -name terragrunt.hcl -not -path '*/.terragrunt-cache/*' -printf '%h\\n' | xargs -r -n1 dirname | sort -u | tr '\\n' ' '", project_dir / "examples/terragrunt")
+
+# Prefer OpenTofu, fall back to Terraform.
+tofu := which("tofu") || require("terraform")
+terragrunt := require("terragrunt")
 
 [private]
 default:
     @just help
 
-# Initialize Terraform modules
-[group("terraform")]
-init *modules:
+# Initialize Terraform roots and Terragrunt stacks
+init:
     #!/usr/bin/env bash
-    set -euxo pipefail
-    modules=({{ prepend(modules_dir, modules) || default_module_list }})
-    for module in ${modules}; do
-        tofu -chdir=${module} init
+    set -euo pipefail
+    for root in {{ default_root_list }}; do
+        {{ tofu }} -chdir=${root} init -backend=false
+    done
+    for stack in {{ default_stack_list }}; do
+        {{ terragrunt }} run --all init --working-dir ${stack} --non-interactive
     done
 
-# Validate Terraform modules
-[group("terraform")]
-validate *modules: (init modules)
+# Check Terraform roots and Terragrunt stacks
+check: init
     #!/usr/bin/env bash
-    set -euxo pipefail
-    modules=({{ prepend(modules_dir, modules) || default_module_list }})
-    for module in ${modules}; do
-        tofu -chdir=${module} fmt -check
-        tofu -chdir=${module} validate
+    set -euo pipefail
+    for root in {{ default_root_list }}; do
+        {{ tofu }} -chdir=${root} fmt -check
+        {{ tofu }} -chdir=${root} validate
     done
+    for stack in {{ default_stack_list }}; do
+        {{ terragrunt }} run --all validate --working-dir ${stack} --non-interactive
+    done
+    {{ terragrunt }} hcl format --check --non-interactive
 
 # Apply formatting standards to project
-[group("dev")]
 fmt:
+    #!/usr/bin/env bash
+    set -euo pipefail
     just --fmt --unstable
-    tofu fmt -recursive
+    {{ tofu }} fmt -recursive
+    {{ terragrunt }} hcl format --non-interactive
 
 # Clean project directory
-[group("dev")]
 clean:
+    #!/usr/bin/env bash
+    set -euo pipefail
     find . -name .terraform -type d | xargs rm -rf
-    find . -name .terraform.lock.hcl -type f | xargs rm -rf
     find . -name "terraform.tfstate*" -type f | xargs rm -rf
+    find . -name .terragrunt-cache -type d | xargs rm -rf
 
 # Show available recipes
 help:
