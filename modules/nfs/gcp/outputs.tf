@@ -13,6 +13,6 @@
 # limitations under the License.
 
 output "app_name" {
-  value       = module.filesystem-client.app_name
+  value       = module.filesystem-client.application.name
   description = "The name of the filesystem client application."
 }

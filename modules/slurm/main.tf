@@ -12,22 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-data "juju_model" "this" {
-  name = var.model_name
-}
-
 data "juju_application" "mysql" {
-  name  = var.database_backend.name
-  model = coalesce(var.database_backend.model, data.juju_model.this.name)
+  name       = var.database_backend.name
+  model_uuid = coalesce(var.database_backend.model_uuid, var.model_uuid)
 }
 
 # Setup control plane
 
 module "slurmctld" {
-  source = "git::https://github.com/canonical/slurm-charms//charms/slurmctld/terraform"
+  source = "git::https://github.com/canonical/slurm-charms//charms/slurmctld/terraform?ref=9943f751b39268c24167ccddf9dc7145ce69cdae"
 
-  model_name  = data.juju_model.this.name
-  app_name    = var.controller.app_name
+  model_uuid = var.model_uuid
+  app_name   = var.controller.app_name
+  base       = var.base
+
   channel     = var.channel
   units       = 1
   config      = var.controller.config
@@ -35,10 +33,12 @@ module "slurmctld" {
 }
 
 module "slurmdbd" {
-  source = "git::https://github.com/canonical/slurm-charms//charms/slurmdbd/terraform"
+  source = "git::https://github.com/canonical/slurm-charms//charms/slurmdbd/terraform?ref=9943f751b39268c24167ccddf9dc7145ce69cdae"
 
-  model_name  = data.juju_model.this.name
-  app_name    = var.database.app_name
+  model_uuid = var.model_uuid
+  app_name   = var.database.app_name
+  base       = var.base
+
   channel     = var.channel
   units       = 1
   config      = var.database.config
@@ -46,10 +46,12 @@ module "slurmdbd" {
 }
 
 module "slurmrestd" {
-  source = "git::https://github.com/canonical/slurm-charms//charms/slurmrestd/terraform"
+  source = "git::https://github.com/canonical/slurm-charms//charms/slurmrestd/terraform?ref=9943f751b39268c24167ccddf9dc7145ce69cdae"
 
-  model_name  = data.juju_model.this.name
-  app_name    = var.rest_api.app_name
+  model_uuid = var.model_uuid
+  app_name   = var.rest_api.app_name
+  base       = var.base
+
   channel     = var.channel
   units       = 1
   config      = var.rest_api.config
@@ -57,10 +59,12 @@ module "slurmrestd" {
 }
 
 module "sackd" {
-  source = "git::https://github.com/canonical/slurm-charms//charms/sackd/terraform"
+  source = "git::https://github.com/canonical/slurm-charms//charms/sackd/terraform?ref=9943f751b39268c24167ccddf9dc7145ce69cdae"
 
-  model_name  = data.juju_model.this.name
-  app_name    = var.kiosk.app_name
+  model_uuid = var.model_uuid
+  app_name   = var.kiosk.app_name
+  base       = var.base
+
   channel     = var.channel
   units       = var.kiosk.units
   config      = var.kiosk.config
@@ -68,52 +72,52 @@ module "sackd" {
 }
 
 resource "juju_integration" "sackd-to-slurmctld" {
-  model = data.juju_model.this.name
+  model_uuid = var.model_uuid
 
   application {
-    name     = module.sackd.app_name
+    name     = module.sackd.application.name
     endpoint = module.sackd.provides.slurmctld
   }
 
   application {
-    name     = module.slurmctld.app_name
-    endpoint = module.slurmctld.requires.login-node
+    name     = module.slurmctld.application.name
+    endpoint = module.slurmctld.requires.sackd
   }
 }
 
 resource "juju_integration" "slurmdbd-to-slurmctld" {
-  model = data.juju_model.this.name
+  model_uuid = var.model_uuid
 
   application {
-    name     = module.slurmdbd.app_name
+    name     = module.slurmdbd.application.name
     endpoint = module.slurmdbd.provides.slurmctld
   }
 
   application {
-    name     = module.slurmctld.app_name
+    name     = module.slurmctld.application.name
     endpoint = module.slurmctld.requires.slurmdbd
   }
 }
 
 resource "juju_integration" "slurmrestd-to-slurmctld" {
-  model = var.model_name
+  model_uuid = var.model_uuid
 
   application {
-    name     = module.slurmrestd.app_name
+    name     = module.slurmrestd.application.name
     endpoint = module.slurmrestd.provides.slurmctld
   }
 
   application {
-    name     = module.slurmctld.app_name
+    name     = module.slurmctld.application.name
     endpoint = module.slurmctld.requires.slurmrestd
   }
 }
 
 resource "juju_integration" "slurmdbd-to-mysql" {
-  model = data.juju_model.this.name
+  model_uuid = var.model_uuid
 
   application {
-    name     = module.slurmdbd.app_name
+    name     = module.slurmdbd.application.name
     endpoint = module.slurmdbd.requires.database
   }
 
@@ -127,27 +131,30 @@ resource "juju_integration" "slurmdbd-to-mysql" {
 
 module "slurmd_partitions" {
   for_each = var.compute_partitions
-  source   = "git::https://github.com/canonical/slurm-charms//charms/slurmd/terraform"
+  source   = "git::https://github.com/canonical/slurm-charms//charms/slurmd/terraform?ref=9943f751b39268c24167ccddf9dc7145ce69cdae"
 
-  model_name  = data.juju_model.this.name
-  app_name    = each.key
+  model_uuid = var.model_uuid
+  app_name   = each.key
+  base       = var.base
+
   channel     = var.channel
   units       = each.value.units
+  machines    = null
   config      = each.value.config
   constraints = each.value.constraints
 }
 
 resource "juju_integration" "slurmd-to-slurmctld" {
-  for_each = module.slurmd_partitions
-  model    = data.juju_model.this.name
+  for_each   = module.slurmd_partitions
+  model_uuid = var.model_uuid
 
   application {
-    name     = each.value.app_name
+    name     = each.value.application.name
     endpoint = each.value.provides.slurmctld
   }
 
   application {
-    name     = module.slurmctld.app_name
+    name     = module.slurmctld.application.name
     endpoint = module.slurmctld.requires.slurmd
   }
 }

@@ -17,7 +17,8 @@ This module offers the following configurable units:
 | `tier`                      | string | Service tier of the NFS instance                                |               |    Y     |
 | `capacity_gb`               | number | File share capacity in GiB                                      |               |    Y     |
 | `mountpoint`                | string | Path to the directory where the NFS share will be mounted       |               |    Y     |
-| `model_name`                | string | Name of the target Juju model                                   |               |    Y     |
+| `model_uuid`                | string | UUID of the target Juju model                                   |               |    Y     |
+| `base`                      | string | Base operating system for the NFS charms                        | "ubuntu@26.04" |         |
 | `nfs_server_proxy_channel`  | string | Channel to deploy the nfs-server-proxy charm from               | "latest/edge" |          |
 | `filesystem_client_channel` | string | Channel to deploy the filesystem-client charm from              | "latest/edge" |          |
 

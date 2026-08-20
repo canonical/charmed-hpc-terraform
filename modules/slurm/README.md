@@ -10,8 +10,9 @@ This module offers the following configurable units:
 
 | Name                          | Type        | Description                                                       | Default                        | Required |
 |-------------------------------|-------------|-------------------------------------------------------------------|--------------------------------|:--------:|
-| `model_name`                  | string      | Name of the target Juju model                                     |                                |    Y     |
+| `model_uuid`                  | string      | UUID of the target Juju model                                     |                                |    Y     |
 | `database_backend`            | object      | Information about the application provisioning the Slurm database |                                |    Y     |
+| `base`                        | string      | Base operating system for the Slurm charms                        | "ubuntu@26.04"                 |          |
 | `channel`                     | string      | Channel to deploy the Slurm charms from                           | "latest/edge"                  |          |
 | `controller`                  | object      | Configuration options for the Slurm controller node               | `{ app_name = "controller" }`  |          |
 | `database`                    | object      | Configuration options for the Slurm database node                 | `{ app_name = "database" }`    |          |

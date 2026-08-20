@@ -1,13 +1,17 @@
 terraform {
+  required_version = ">= 1.6.6"
+
   required_providers {
     juju = {
       source  = "juju/juju"
-      version = ">= 0.19.0"
+      version = "~> 1.0"
     }
   }
 }
 
-provider "juju" {}
+provider "juju" {
+  skip_failed_deletion = true
+}
 
 resource "juju_model" "charmed-hpc" {
   name = "charmed-hpc"
@@ -15,20 +19,22 @@ resource "juju_model" "charmed-hpc" {
 
 ## MySQL - provides backing database for the accounting node.
 module "mysql" {
-  source = "git::https://github.com/canonical/mysql-operator//terraform"
+  source = "git::https://github.com/canonical/mysql-operators//machines/terraform?ref=33d381861060a74c10681eae2feca1ce2ef0c105"
 
-  juju_model_name = juju_model.charmed-hpc.name
-  app_name        = "mysql"
-  channel         = "8.0/stable"
-  units           = 1
+  model        = juju_model.charmed-hpc.uuid
+  app_name     = "mysql"
+  base         = "ubuntu@26.04"
+  channel      = "8.4/edge"
+  units        = 1
+  storage_size = "10G"
 }
 
 module "slurm" {
-  source = "git::https://github.com/canonical/charmed-hpc-terraform//modules/slurm"
+  source = "../../modules/slurm"
 
-  model_name = juju_model.charmed-hpc.name
+  model_uuid = juju_model.charmed-hpc.uuid
   database_backend = {
-    name     = module.mysql.application_name,
+    name     = module.mysql.app_name,
     endpoint = module.mysql.provides.database
   }
 

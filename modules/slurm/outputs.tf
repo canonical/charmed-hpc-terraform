@@ -15,14 +15,14 @@
 output "controller" {
   description = "Information about the Slurm controller application."
   value = {
-    app_name = module.slurmctld.app_name
+    app_name = module.slurmctld.application.name
     requires = module.slurmctld.requires
   }
 }
 output "database" {
   description = "Information about the Slurm database application."
   value = {
-    app_name = module.slurmdbd.app_name
+    app_name = module.slurmdbd.application.name
     provides = module.slurmdbd.provides
     requires = module.slurmdbd.requires
   }
@@ -30,14 +30,14 @@ output "database" {
 output "rest_api" {
   description = "Information about the Slurm REST API application."
   value = {
-    app_name = module.slurmrestd.app_name
+    app_name = module.slurmrestd.application.name
     provides = module.slurmrestd.provides
   }
 }
 output "kiosk" {
   description = "Information about the Slurm kiosk application."
   value = {
-    app_name = module.sackd.app_name
+    app_name = module.sackd.application.name
     provides = module.slurmrestd.provides
   }
 }
@@ -46,7 +46,7 @@ output "compute_partitions" {
   description = "Information about the Slurm compute partitions."
   value = {
     for key, value in module.slurmd_partitions : key => {
-      app_name = value.app_name,
+      app_name = value.application.name,
       provides = value.provides
     }
   }

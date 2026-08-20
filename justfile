@@ -10,10 +10,10 @@
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
-# limitations under the License.\
-# Necessary to use `||` logical operator.
+# limitations under the License.
 
-set unstable := true
+set unstable
+set lists
 
 project_dir := justfile_directory()
 modules_dir := project_dir / "modules"
