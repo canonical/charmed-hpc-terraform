@@ -139,7 +139,6 @@ module "slurmd_partitions" {
 
   channel     = var.channel
   units       = each.value.units
-  machines    = null
   config      = each.value.config
   constraints = each.value.constraints
 }
