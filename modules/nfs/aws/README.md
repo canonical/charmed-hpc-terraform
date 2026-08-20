@@ -15,7 +15,8 @@ This module offers the following configurable units:
 | `vpc_id`                      | string      | VPC ID for the resources created                          |               |    Y     |
 | `subnet_id`                   | string      | Subnet ID where the NFS share and proxy will be allocated |               |    Y     |
 | `mountpoint`                  | string      | Path to the directory where the NFS share will be mounted |               |    Y     |
-| `model_name`                  | string      | Name of the target Juju model                             |               |    Y     |
+| `model_uuid`                  | string      | UUID of the target Juju model                             |               |    Y     |
+| `base`                        | string      | Base operating system for the NFS charms                  | "ubuntu@26.04" |         |
 | `nfs_server_proxy_channel`    | string      | Channel to deploy the nfs-server-proxy charm from         | "latest/edge" |          |
 | `filesystem_client_channel`   | string      | Channel to deploy the filesystem-client charm from        | "latest/edge" |          |
 

@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-variable "model_name" {
-  description = "Name of the target Juju model."
+variable "model_uuid" {
+  description = "UUID of the target Juju model."
   type        = string
   nullable    = false
 }
@@ -21,13 +21,20 @@ variable "model_name" {
 variable "database_backend" {
   description = "Information about the charm application provisioning the Slurm database."
   type = object({
-    name     = string,
-    endpoint = string,
-    model    = optional(string),
+    name       = string,
+    endpoint   = string,
+    model_uuid = optional(string),
   })
   nullable = false
 }
 
+
+variable "base" {
+  description = "Base operating system to deploy the Slurm charms on."
+  type        = string
+  default     = "ubuntu@26.04"
+  nullable    = false
+}
 
 variable "channel" {
   description = "Channel to deploy the Slurm charms from."

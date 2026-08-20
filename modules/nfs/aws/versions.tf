@@ -13,10 +13,12 @@
 # limitations under the License.
 
 terraform {
+  required_version = ">= 1.6.6"
+
   required_providers {
     juju = {
       source  = "juju/juju"
-      version = ">= 0.19.0"
+      version = "~> 1.0"
     }
     aws = {
       source  = "hashicorp/aws"

@@ -1,8 +1,10 @@
 terraform {
+  required_version = ">= 1.6.6"
+
   required_providers {
     juju = {
       source  = "juju/juju"
-      version = ">= 0.19.0"
+      version = "~> 1.0"
     }
     google = {
       source  = "hashicorp/google"
@@ -35,23 +37,23 @@ module "nfs-share" {
   network     = "default"
   name        = "nfs-share"
   mountpoint  = "/nfs/home"
-  model_name  = juju_model.charmed-hpc.name
+  model_uuid  = juju_model.charmed-hpc.uuid
 }
 
 resource "juju_application" "ubuntu" {
-  name  = "ubuntu"
-  model = juju_model.charmed-hpc.name
+  name       = "ubuntu"
+  model_uuid = juju_model.charmed-hpc.uuid
 
   charm {
     name = "ubuntu"
-    base = "ubuntu@24.04"
+    base = "ubuntu@26.04"
   }
 }
 
 # Since the filesystem client is a subordinate charm, it uses
 # the `juju-info` endpoint to integrate with other charms.
 resource "juju_integration" "ubuntu-to-filesystem-client" {
-  model = juju_model.charmed-hpc.name
+  model_uuid = juju_model.charmed-hpc.uuid
 
   application {
     name     = juju_application.ubuntu.name

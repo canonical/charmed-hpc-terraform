@@ -1,8 +1,10 @@
 terraform {
+  required_version = ">= 1.6.6"
+
   required_providers {
     juju = {
       source  = "juju/juju"
-      version = ">= 0.19.0"
+      version = "~> 1.0"
     }
     aws = {
       source  = "hashicorp/aws"
@@ -53,7 +55,8 @@ data "aws_route_tables" "controller" {
 # ==== NFS VPC setup ====
 
 module "nfs-vpc" {
-  source = "terraform-aws-modules/vpc/aws"
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "~> 5.0"
 
   name = "nfs-vpc"
   cidr = "10.0.0.0/16"
@@ -152,29 +155,29 @@ resource "juju_model" "charmed-hpc" {
 }
 
 module "nfs-share" {
-  source     = "git::https://github.com/canonical/charmed-hpc-terraform//modules/nfs/aws"
+  source     = "../../../modules/nfs/aws"
   name       = "nfs-share"
   vpc_id     = module.nfs-vpc.vpc_id
   subnet_id  = module.nfs-vpc.private_subnets[0]
   mountpoint = "/nfs/home"
-  model_name = juju_model.charmed-hpc.name
+  model_uuid = juju_model.charmed-hpc.uuid
 }
 
 resource "juju_machine" "ubuntu" {
-  model = juju_model.charmed-hpc.name
-  base  = "ubuntu@24.04"
+  model_uuid = juju_model.charmed-hpc.uuid
+  base       = "ubuntu@26.04"
 
   # Important to ensure the application is properly allocated in the correct subnet.
   placement = "subnet=${module.nfs-vpc.private_subnets_cidr_blocks[0]}"
 }
 
 resource "juju_application" "ubuntu" {
-  name  = "ubuntu"
-  model = juju_model.charmed-hpc.name
+  name       = "ubuntu"
+  model_uuid = juju_model.charmed-hpc.uuid
 
   charm {
     name = "ubuntu"
-    base = "ubuntu@24.04"
+    base = "ubuntu@26.04"
   }
 
   machines = [juju_machine.ubuntu.machine_id]
@@ -183,7 +186,7 @@ resource "juju_application" "ubuntu" {
 # Since the filesystem client is a subordinate charm, it uses
 # the `juju-info` endpoint to integrate with other charms.
 resource "juju_integration" "ubuntu-to-filesystem-client" {
-  model = juju_model.charmed-hpc.name
+  model_uuid = juju_model.charmed-hpc.uuid
 
   application {
     name     = juju_application.ubuntu.name

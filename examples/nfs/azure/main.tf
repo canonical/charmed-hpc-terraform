@@ -1,8 +1,10 @@
 terraform {
+  required_version = ">= 1.6.6"
+
   required_providers {
     juju = {
       source  = "juju/juju"
-      version = ">= 0.19.0"
+      version = "~> 1.0"
     }
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -77,7 +79,7 @@ resource "juju_model" "charmed-hpc" {
 }
 
 module "nfs-share" {
-  source = "git::https://github.com/canonical/charmed-hpc-terraform//modules/nfs/azure"
+  source = "../../../modules/nfs/azure"
 
   name                = "nfs-share"
   resource_group_name = azurerm_resource_group.nfs-group.name
@@ -85,7 +87,7 @@ module "nfs-share" {
     name                 = azurerm_subnet.nfs-subnet.name
     virtual_network_name = azurerm_subnet.nfs-subnet.virtual_network_name
   }
-  model_name = juju_model.charmed-hpc.name
+  model_uuid = juju_model.charmed-hpc.uuid
   quota      = 100
   mountpoint = "/nfs/home"
   depends_on = [
@@ -94,12 +96,12 @@ module "nfs-share" {
 }
 
 resource "juju_application" "ubuntu" {
-  name  = "ubuntu"
-  model = juju_model.charmed-hpc.name
+  name       = "ubuntu"
+  model_uuid = juju_model.charmed-hpc.uuid
 
   charm {
     name = "ubuntu"
-    base = "ubuntu@24.04"
+    base = "ubuntu@26.04"
   }
 
   units = 1
@@ -108,7 +110,7 @@ resource "juju_application" "ubuntu" {
 # Since the filesystem client is a subordinate charm, it uses
 # the `juju-info` endpoint to integrate with other charms.
 resource "juju_integration" "ubuntu-to-filesystem-client" {
-  model = juju_model.charmed-hpc.name
+  model_uuid = juju_model.charmed-hpc.uuid
 
   application {
     name     = juju_application.ubuntu.name

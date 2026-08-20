@@ -33,9 +33,17 @@ variable "mountpoint" {
   type        = string
 }
 
-variable "model_name" {
-  description = "Name of the target Juju model."
+variable "model_uuid" {
+  description = "UUID of the target Juju model."
   type        = string
+  nullable    = false
+}
+
+variable "base" {
+  description = "Base operating system to deploy the NFS charms on."
+  type        = string
+  default     = "ubuntu@26.04"
+  nullable    = false
 }
 
 variable "nfs_server_proxy_channel" {

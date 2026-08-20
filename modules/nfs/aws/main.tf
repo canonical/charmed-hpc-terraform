@@ -21,7 +21,8 @@ data "aws_subnet" "this" {
 }
 
 module "efs" {
-  source = "terraform-aws-modules/efs/aws"
+  source  = "terraform-aws-modules/efs/aws"
+  version = "~> 1.6"
 
   name             = var.name
   performance_mode = "generalPurpose"
@@ -64,37 +65,32 @@ module "efs" {
   }
 }
 
-// TODO: Modify https://github.com/canonical/filesystem-charms//charms/filesystem-client/terraform
-// so that it allows machine placement.
 resource "juju_machine" "nfs-server-proxy" {
-  model     = var.model_name
-  base      = "ubuntu@24.04"
-  placement = "subnet=${data.aws_subnet.this.cidr_block}"
+  model_uuid = var.model_uuid
+  base       = var.base
+  placement  = "subnet=${data.aws_subnet.this.cidr_block}"
 }
 
-resource "juju_application" "nfs-server-proxy" {
-  name  = "${var.name}-server"
-  model = var.model_name
+module "nfs-server-proxy" {
+  source = "git::https://github.com/canonical/filesystem-charms//charms/nfs-server-proxy/terraform?ref=0a49f1705d62e4fbb8c52360ad4b2372e8b64214"
 
-  charm {
-    name    = "nfs-server-proxy"
-    channel = var.nfs_server_proxy_channel
-    base    = "ubuntu@24.04"
-  }
-
+  app_name   = "${var.name}-server"
+  model_uuid = var.model_uuid
+  base       = var.base
+  channel    = var.nfs_server_proxy_channel
+  machines   = [juju_machine.nfs-server-proxy.machine_id]
   config = {
     "hostname" : module.efs.dns_name
     "path" : "/"
   }
-
-  machines = [juju_machine.nfs-server-proxy.machine_id]
 }
 
 module "filesystem-client" {
-  source = "git::https://github.com/canonical/filesystem-charms//charms/filesystem-client/terraform"
+  source = "git::https://github.com/canonical/filesystem-charms//charms/filesystem-client/terraform?ref=0a49f1705d62e4fbb8c52360ad4b2372e8b64214"
 
   app_name   = "${var.name}-client"
-  model_name = var.model_name
+  model_uuid = var.model_uuid
+  base       = var.base
   channel    = var.filesystem_client_channel
   config = {
     "mountpoint" : var.mountpoint
@@ -102,17 +98,15 @@ module "filesystem-client" {
 }
 
 resource "juju_integration" "nfs" {
-  model = var.model_name
+  model_uuid = var.model_uuid
 
   application {
-    name     = juju_application.nfs-server-proxy.name
-    endpoint = "filesystem"
+    name     = module.nfs-server-proxy.application.name
+    endpoint = module.nfs-server-proxy.provides.filesystem
   }
 
   application {
-    name     = module.filesystem-client.app_name
+    name     = module.filesystem-client.application.name
     endpoint = module.filesystem-client.requires.filesystem
   }
-
-  depends_on = [juju_application.nfs-server-proxy]
 }
