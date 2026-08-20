@@ -1,0 +1,64 @@
+# Terraform module for Lustre
+
+This is a Terraform module facilitating the deployment of a [Lustre](https://www.lustre.org/) parallel file system using
+the `lustre-server` charm, and the corresponding `filesystem-client` charm to mount the filesystem on Juju machines.
+
+The `lustre-server` charm provisions all Lustre server components (MGS, MDS, and OSS) with ZFS-backed storage pools.
+The first unit acts as the MGS+MDS; additional units act as OSSes. A minimum of two units is required for a usable
+filesystem.
+
+## Requirements
+
+* Lustre requires kernel modules (built via DKMS) and ZFS, so the server units must run on **virtual machines**, not
+  LXD containers.
+* On the LXD cloud, the LXD profile Juju generates for the model must have Secure Boot disabled
+  (`boot.mode=uefi-nosecureboot`) so the unsigned DKMS modules can be loaded. See the
+  [example](../../examples/lustre/main.tf) for how to apply this automatically.
+
+## API
+
+### Inputs
+
+This module offers the following configurable units:
+
+| Name         | Type   | Description                                     | Default        | Required |
+|--------------|--------|-------------------------------------------------|----------------|:--------:|
+| `model_uuid` | string | UUID of the target Juju model                   |                |    Y     |
+| `base`       | string | Base operating system for the Lustre charms     | "ubuntu@26.04" |          |
+| `server`     | object | Configuration options for the Lustre server     | `{}`           |          |
+| `client`     | object | Configuration options for the filesystem client |                |    Y     |
+
+The `server` object accepts the following properties:
+
+| Name          | Type   | Description                                     | Default         | Required |
+|---------------|--------|-------------------------------------------------|-----------------|:--------:|
+| `app_name`    | string | Name of the server application                  | "lustre-server" |          |
+| `units`       | number | Number of Lustre server units                   | 1               |          |
+| `channel`     | string | Configuration options for the server            | "latest/edge"   |          |
+| `config`      | string | Juju configuration options for the server       | ""              |          |
+| `constraints` | string | Juju constraints for the server                 | ""              |          |
+| `machines`    | array  | Machines where the server nodes are deployed    | `[]`            |          |
+
+If the `machines` property is set, the `units` variable is ignored.
+
+The `client` object accepts the following properties:
+
+| Name          | Type   | Description                                     | Default         | Required |
+|---------------|--------|-------------------------------------------------|-----------------|:--------:|
+| `app_name`    | string | Name of the client application                  | "lustre-client" |          |
+| `mountpoint`  | string | Path where the filesystem will be mounted       |                 |    Y     |
+| `channel`     | string | Configuration options for the client            | "latest/edge"   |          |
+| `config`      | string | Juju configuration options for the client       | ""              |          |
+
+### Outputs
+
+After applying, the module exports the following outputs:
+
+| Name         | Description                                                                          |
+|--------------|--------------------------------------------------------------------------------------|
+| `app_name`   | Application name for the `filesystem-client` that is ready to mount the Lustre share |
+| `mountpoint` | Path where the Lustre filesystem is mounted on client machines                       |
+
+## Usage
+
+See the [`lustre`](../../examples/lustre/main.tf) example for an usage example.
