@@ -49,7 +49,7 @@ module "lustre-share" {
   }
 
   client = {
-    mountpoint = "/lustre/home"
+    mountpoint = "/lustre"
   }
 
   depends_on = [null_resource.disable-secure-boot]

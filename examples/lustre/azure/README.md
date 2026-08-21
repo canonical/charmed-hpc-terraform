@@ -2,7 +2,7 @@
 
 This example deploys a [`lustre-server`](../../../modules/lustre) cluster on Azure using RDMA-capable VMs, a
 `filesystem-client`, and integrates the client with a generic `ubuntu` application so the Lustre share is mounted at
-`/lustre/home`.
+`/lustre`.
 
 ## Prerequisites
 
