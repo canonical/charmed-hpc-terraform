@@ -79,6 +79,7 @@ module "nfs-server-proxy" {
   base       = var.base
   channel    = var.nfs_server_proxy_channel
   machines   = [juju_machine.nfs-server-proxy.machine_id]
+  units      = null
   config = {
     "hostname" : module.efs.dns_name
     "path" : "/"

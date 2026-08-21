@@ -19,13 +19,14 @@ locals {
 module "lustre-server" {
   source = "git::https://github.com/canonical/filesystem-charms//charms/lustre-server/terraform?ref=0a49f1705d62e4fbb8c52360ad4b2372e8b64214"
 
-  app_name   = var.server.app_name
-  model_uuid = var.model_uuid
-  base       = var.base
-  channel    = var.server.channel
-  machines   = local.create_machines ? null : var.server.machines
-  units      = local.create_machines ? var.server.units : null
-  config     = var.server.config
+  app_name    = var.server.app_name
+  model_uuid  = var.model_uuid
+  base        = var.base
+  channel     = var.server.channel
+  machines    = local.create_machines ? null : var.server.machines
+  units       = local.create_machines ? var.server.units : null
+  config      = var.server.config
+  constraints = var.server.constraints
 }
 
 module "filesystem-client" {

@@ -99,7 +99,7 @@ module "lustre-share" {
   }
 
   client = {
-    mountpoint = "/lustre/home"
+    mountpoint = "/lustre"
   }
 }
 

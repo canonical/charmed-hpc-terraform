@@ -33,7 +33,7 @@ The `server` object accepts the following properties:
 | Name          | Type   | Description                                     | Default         | Required |
 |---------------|--------|-------------------------------------------------|-----------------|:--------:|
 | `app_name`    | string | Name of the server application                  | "lustre-server" |          |
-| `units`       | number | Number of Lustre server units                   | 1               |          |
+| `units`       | number | Number of Lustre server units                   | 2               |          |
 | `channel`     | string | Configuration options for the server            | "latest/edge"   |          |
 | `config`      | string | Juju configuration options for the server       | ""              |          |
 | `constraints` | string | Juju constraints for the server                 | ""              |          |
