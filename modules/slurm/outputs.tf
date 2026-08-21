@@ -38,7 +38,7 @@ output "kiosk" {
   description = "Information about the Slurm kiosk application."
   value = {
     app_name = module.sackd.application.name
-    provides = module.slurmrestd.provides
+    provides = module.sackd.provides
   }
 }
 
