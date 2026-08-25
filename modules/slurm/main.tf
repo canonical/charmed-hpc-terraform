@@ -12,11 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-data "juju_application" "mysql" {
-  name       = var.database_backend.name
-  model_uuid = coalesce(var.database_backend.model_uuid, var.model_uuid)
-}
-
 # Setup control plane
 
 module "slurmctld" {
@@ -122,7 +117,7 @@ resource "juju_integration" "slurmdbd-to-mysql" {
   }
 
   application {
-    name     = data.juju_application.mysql.name
+    name     = var.database_backend.name
     endpoint = var.database_backend.endpoint
   }
 }
