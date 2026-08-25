@@ -21,9 +21,8 @@ variable "model_uuid" {
 variable "database_backend" {
   description = "Information about the charm application provisioning the Slurm database."
   type = object({
-    name       = string,
-    endpoint   = string,
-    model_uuid = optional(string),
+    name     = string,
+    endpoint = string,
   })
   nullable = false
 }
