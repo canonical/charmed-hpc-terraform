@@ -78,6 +78,10 @@ provider "registry.opentofu.org/juju/juju" {
   version     = "1.5.6"
   constraints = "~> 1.0"
   hashes = [
+    "h1:8pZrIxnjXAulY4oD3ES1/TJkWKpb4XA3S5R+QiJIK1k=",
+    "h1:Gwxir/dpweoDhnXMH0e0poMpnz2WvEd2LBS1nZAWOPk=",
+    "h1:MFssjwHz0RAuTrcRTC6MAZOBwrrkSKeG3p/WDvAqVnA=",
+    "h1:Z60GUqagdkJKdCV5GMHboP0sKsVp6x9JMXV8oGnBiD8=",
     "h1:iP7lyUdutT5JqdqIBxMMVojOmHNtFawYLyqXyh4VsFM=",
     "zh:55d7ec283d6237e0e1cdb4c83b4f96a62ba704f69067c37015e5ba25af66e65c",
     "zh:5a8d3d2ed1c8ff0254939e729811efbb0706801a1ef7a7a07d91d7eed65c8ba2",

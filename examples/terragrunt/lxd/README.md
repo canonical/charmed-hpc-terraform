@@ -29,7 +29,15 @@ terragrunt run --all apply
   [OpenTofu](https://opentofu.org/) installed.
 * The Juju CLI installed.
 * LXD installed on the system, with certificate credentials registered
-  with the Juju CLI (i.e. you have run `juju add-credential localhost`). 
+  with the Juju CLI (i.e. you have run `juju add-credential localhost`).
+
+## LXD credentials
+
+The `controller` units take their LXD certificate credentials from the
+`LXD_CLIENT_CERT`, `LXD_CLIENT_KEY`, and `LXD_SERVER_CERT` environment
+variables when set. Otherwise they fall back to the `localhost` credential
+registered with the local Juju client, read directly from
+`~/.local/share/juju/credentials.yaml`.
 
 ## Accessing the controller with the Juju CLI
 

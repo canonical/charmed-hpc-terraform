@@ -9,7 +9,7 @@
 dependency "controller" {
   config_path = "./controller"
 
-  # Mock outputs let init/validate/plan succeed before the controller unit has
+  # Mock outputs let init and validate succeed before the controller unit has
   # been applied.
   mock_outputs = {
     connection = {
@@ -19,7 +19,7 @@ dependency "controller" {
       ca_certificate       = "changeme"
     }
   }
-  mock_outputs_allowed_terraform_commands = ["init", "validate", "plan", "destroy"]
+  mock_outputs_allowed_terraform_commands = ["init", "validate"]
 }
 
 inputs = {
