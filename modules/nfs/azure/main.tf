@@ -101,6 +101,7 @@ module "nfs-server-proxy" {
   config = {
     "hostname" : azurerm_storage_account.nfs.primary_file_host
     "path" : "/${azurerm_storage_account.nfs.name}/${azurerm_storage_share.nfs.name}"
+    "force-v4" : "true"
   }
 
   depends_on = [
