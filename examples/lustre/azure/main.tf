@@ -79,6 +79,23 @@ resource "juju_model" "charmed-hpc" {
   config = {
     resource-group-name = azurerm_resource_group.lustre-group.name
     network             = azurerm_virtual_network.lustre-vnet.name
+
+    # Enable IPoIB before any charm is deployed. See:
+    # https://learn.microsoft.com/en-us/azure/virtual-machines/extensions/enable-infiniband#enable-ip-over-infiniband-ib
+    # Note: instructions are incorrect, the current waagent.conf does not include `# OS.EnableRDMA=n` and the service
+    # name is `walinuxagent`, not `waagent`.
+    cloudinit-userdata = <<-EOT
+      #cloud-config
+      packages:
+        - rdma-core
+      write_files:
+        - path: /etc/waagent.conf
+          append: true
+          content: |
+            OS.EnableRDMA=y
+      postruncmd:
+        - systemctl restart walinuxagent
+    EOT
   }
 }
 

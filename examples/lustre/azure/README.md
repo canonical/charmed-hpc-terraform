@@ -12,6 +12,8 @@ This example deploys a [`lustre-server`](../../../modules/lustre) cluster on Azu
 * A region and VM size that support InfiniBand. The default is `Standard_HB120rs_v3` in `eastus`; adjust
   `server_vm_size` and `location` for your quota. InfiniBand sizes (HB, HC, ND families) require a quota increase in
   most subscriptions.
+* The Juju model sets `cloudinit-userdata` to enable IP over InfiniBand (IPoIB) on every machine during provisioning,
+  ahead of any charm being deployed.
 
 ## Usage
 
