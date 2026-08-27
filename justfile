@@ -64,6 +64,7 @@ clean:
     #!/usr/bin/env bash
     set -euo pipefail
     find . -name .terraform -type d | xargs rm -rf
+    find . -name .terraform.lock.hcl -type d | xargs rm -rf
     find . -name "terraform.tfstate*" -type f | xargs rm -rf
     find . -name .terragrunt-cache -type d | xargs rm -rf
 
