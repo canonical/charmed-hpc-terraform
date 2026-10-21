@@ -13,7 +13,7 @@
 # limitations under the License.
 
 resource "juju_controller" "this" {
-  name           = var.name
+  name           = var.controller_name
   juju_binary    = var.juju_binary
   bootstrap_base = var.bootstrap_base
 
@@ -49,14 +49,14 @@ resource "local_sensitive_file" "juju-controllers-yaml" {
   filename = "${var.juju_data_dir}/controllers.yaml"
   content = yamlencode({
     controllers = {
-      (var.name) = {
+      (var.controller_name) = {
         uuid          = juju_controller.this.controller_uuid
         api-endpoints = juju_controller.this.api_addresses
         ca-cert       = juju_controller.this.ca_cert
         cloud         = var.cloud.name
       }
     }
-    current-controller = var.name
+    current-controller = var.controller_name
   })
   file_permission = "0600"
 }
@@ -70,7 +70,7 @@ resource "local_sensitive_file" "juju-accounts-yaml" {
   filename = "${var.juju_data_dir}/accounts.yaml"
   content = yamlencode({
     controllers = {
-      (var.name) = {
+      (var.controller_name) = {
         user              = juju_controller.this.username
         password          = juju_controller.this.password
         last-known-access = "superuser"

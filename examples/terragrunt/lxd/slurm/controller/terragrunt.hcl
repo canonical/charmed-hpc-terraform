@@ -43,8 +43,8 @@ locals {
 }
 
 inputs = {
-  name           = "charmed-hpc"
-  bootstrap_base = "ubuntu@24.04"
+  controller_name = "charmed-hpc"
+  bootstrap_base  = "ubuntu@24.04"
 
   # Write the controller module's Juju data files into the gitignored
   # Terragrunt cache, so the juju_data_dir output gives a pre-authenticated

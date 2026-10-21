@@ -18,7 +18,7 @@ terraform {
   required_providers {
     juju = {
       source  = "juju/juju"
-      version = ">= 1.0, < 3.0"
+      version = ">= 1.3, < 3.0"
     }
     local = {
       source  = "hashicorp/local"
