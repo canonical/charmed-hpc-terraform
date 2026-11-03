@@ -16,3 +16,11 @@ output "app_name" {
   value       = module.filesystem-client.application.name
   description = "The name of the filesystem client application."
 }
+
+output "components" {
+  description = "Map of deployed applications, keyed by component name."
+  value = {
+    filesystem_client = module.filesystem-client.application
+    nfs_server_proxy  = module.nfs-server-proxy.application
+  }
+}
