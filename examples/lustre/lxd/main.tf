@@ -6,6 +6,10 @@ terraform {
       source  = "juju/juju"
       version = ">= 1.0, < 3.0"
     }
+    null = {
+      source  = "hashicorp/null"
+      version = "~> 3.0"
+    }
   }
 }
 
@@ -19,6 +23,11 @@ provider "juju" {
 
 resource "juju_model" "charmed-hpc" {
   name = "charmed-hpc"
+
+  # Force all machines in the model to be virtual machines: the Lustre
+  # packages use DKMS, and system containers do not play nicely with
+  # `juju add-storage`.
+  constraints = "virt-type=virtual-machine"
 }
 
 # Disable Secure Boot on the LXD profile. Required since the Lustre packages
@@ -44,8 +53,6 @@ module "lustre-share" {
   server = {
     # One unit acts as MGS+MDS, the rest as OSSes.
     units = 2
-    # Easier to install kernel modules on VMs.
-    constraints = "virt-type=virtual-machine"
   }
 
   client = {
@@ -59,8 +66,6 @@ resource "juju_application" "ubuntu" {
   name       = "ubuntu"
   model_uuid = juju_model.charmed-hpc.uuid
   units      = 1
-  # Easier to install kernel modules on VMs.
-  constraints = "virt-type=virtual-machine"
 
   charm {
     name = "ubuntu"

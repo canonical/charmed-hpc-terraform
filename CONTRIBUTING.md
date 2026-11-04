@@ -12,6 +12,27 @@ Have any questions? Feel free to ask them in the [Ubuntu High-Performance Comput
 [Charmed HPC project's contributing guide]: https://github.com/canonical/hpc-team/blob/main/CONTRIBUTING.md
 [Ubuntu High-Performance Computing Matrix chat]: https://matrix.to/#/#hpc:ubuntu.com
 
+## Requirements
+
+Contributing to this repository requires the following tools, all available
+as snaps:
+
+```shell
+sudo snap install just --classic
+sudo snap install opentofu --classic
+sudo snap install terragrunt --classic
+sudo snap install terraform-docs
+sudo snap install tflint
+```
+
+| Tool             | Purpose                                                                  |
+|------------------|--------------------------------------------------------------------------|
+| `just`           | Task runner for the recipes in the [`justfile`](./justfile)              |
+| `opentofu`       | Runs the Terraform checks and validations (`just check`)                 |
+| `terragrunt`     | Validates the Terragrunt example stacks (`just check`)                   |
+| `terraform-docs` | Regenerates the module documentation (`just docs`)                       |
+| `tflint`         | Lints all Terraform code (`just check`)                                  |
+
 ## Hacking on `charmed-hpc-terraform`
 
 This repository uses [just](https://github.com/casey/just) for development
@@ -37,8 +58,11 @@ required tests. You can run the required tests locally using `just`:
 # Apply formatting standards to code
 just fmt
 
-# Validate Terraform modules
-just validate
+# Regenerate the Terraform module documentation
+just docs
+
+# Run the full checks (formatting, validation, linting and docs)
+just check
 ```
 
 ## License information
