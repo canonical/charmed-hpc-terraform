@@ -34,20 +34,6 @@ data "aws_vpc" "controller" {
   id = var.controller_vpc_id
 }
 
-data "aws_subnets" "controller" {
-  filter {
-    name   = "vpc-id"
-    values = [data.aws_vpc.controller.id]
-  }
-}
-
-data "aws_internet_gateway" "controller" {
-  filter {
-    name   = "attachment.vpc-id"
-    values = [data.aws_vpc.controller.id]
-  }
-}
-
 data "aws_route_tables" "controller" {
   vpc_id = data.aws_vpc.controller.id
 }
