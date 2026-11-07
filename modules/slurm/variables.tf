@@ -12,22 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-variable "model_uuid" {
-  description = "UUID of the target Juju model."
-  type        = string
-  nullable    = false
-}
-
-variable "database_backend" {
-  description = "Information about the charm application provisioning the Slurm database."
-  type = object({
-    name     = string,
-    endpoint = string,
-  })
-  nullable = false
-}
-
-
 variable "base" {
   description = "Base operating system to deploy the Slurm charms on."
   type        = string
@@ -42,71 +26,13 @@ variable "channel" {
   nullable    = false
 }
 
-variable "controller" {
-  description = "Configuration options for the Slurm controller node."
-  type = object({
-    app_name    = optional(string),
-    units       = optional(number),
-    config      = optional(map(string)),
-    constraints = optional(string),
-    machines    = optional(list(string), [])
-  })
-  nullable = false
-  default = {
-    app_name = "controller"
-  }
-}
-
-variable "database" {
-  description = "Configuration options for the Slurm database node."
-  type = object({
-    app_name    = optional(string),
-    units       = optional(number),
-    config      = optional(map(string)),
-    constraints = optional(string),
-    machines    = optional(list(string), [])
-  })
-  nullable = false
-  default = {
-    app_name = "database"
-  }
-}
-
-variable "rest_api" {
-  description = "Configuration options for the Slurm REST API node."
-  type = object({
-    app_name    = optional(string),
-    units       = optional(number),
-    config      = optional(map(string)),
-    constraints = optional(string),
-    machines    = optional(list(string), [])
-  })
-  nullable = false
-  default = {
-    app_name = "rest-api"
-  }
-}
-
-variable "kiosk" {
-  description = "Configuration options for the Slurm kiosk node."
-  type = object({
-    app_name    = optional(string),
-    units       = optional(number),
-    config      = optional(map(string)),
-    constraints = optional(string),
-    machines    = optional(list(string), [])
-  })
-  nullable = false
-  default = {
-    app_name = "login-node"
-    units    = 1
-  }
-}
-
 variable "compute_partitions" {
   description = "Map of Slurm compute partitions to deploy."
   type = map(
     object({
+      base        = optional(string),
+      channel     = optional(string),
+      revision    = optional(number),
       units       = optional(number),
       config      = optional(map(string)),
       constraints = optional(string),
@@ -118,4 +44,83 @@ variable "compute_partitions" {
       units = 1
     }
   }
+}
+
+variable "controller" {
+  description = "Configuration options for the Slurm controller node."
+  type = object({
+    app_name    = optional(string, "controller"),
+    base        = optional(string),
+    channel     = optional(string),
+    revision    = optional(number),
+    units       = optional(number),
+    config      = optional(map(string)),
+    constraints = optional(string),
+    machines    = optional(list(string), [])
+  })
+  nullable = false
+  default  = {}
+}
+
+variable "database" {
+  description = "Configuration options for the Slurm database node."
+  type = object({
+    app_name    = optional(string, "database"),
+    base        = optional(string),
+    channel     = optional(string),
+    revision    = optional(number),
+    units       = optional(number),
+    config      = optional(map(string)),
+    constraints = optional(string),
+    machines    = optional(list(string), [])
+  })
+  nullable = false
+  default  = {}
+}
+
+variable "database_backend" {
+  description = "Information about the charm application provisioning the Slurm database."
+  type = object({
+    name     = string,
+    endpoint = string,
+  })
+  nullable = false
+}
+
+variable "kiosk" {
+  description = "Configuration options for the Slurm kiosk node."
+  type = object({
+    app_name    = optional(string, "login-node"),
+    base        = optional(string),
+    channel     = optional(string),
+    revision    = optional(number),
+    units       = optional(number),
+    config      = optional(map(string)),
+    constraints = optional(string),
+    machines    = optional(list(string), [])
+  })
+  nullable = false
+  default  = {}
+}
+
+variable "model_uuid" {
+  description = "UUID of the target Juju model."
+  type        = string
+  nullable    = false
+}
+
+variable "rest_api" {
+  description = "Configuration options for the Slurm REST API node."
+  type = object({
+    app_name    = optional(string, "rest-api"),
+    base        = optional(string),
+    channel     = optional(string),
+    revision    = optional(number),
+    units       = optional(number),
+    config      = optional(map(string)),
+    constraints = optional(string),
+    machines    = optional(list(string), [])
+  })
+  nullable = false
+  default  = {}
 }

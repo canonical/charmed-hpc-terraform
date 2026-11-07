@@ -4,12 +4,16 @@ terraform {
   required_providers {
     juju = {
       source  = "juju/juju"
-      version = "~> 1.0"
+      version = ">= 1.0, < 3.0"
     }
   }
 }
 
 provider "juju" {
+  controller_addresses = var.connection != null ? var.connection.controller_addresses : null
+  username             = var.connection != null ? var.connection.username : null
+  password             = var.connection != null ? var.connection.password : null
+  ca_certificate       = var.connection != null ? var.connection.ca_certificate : null
   skip_failed_deletion = true
 }
 
