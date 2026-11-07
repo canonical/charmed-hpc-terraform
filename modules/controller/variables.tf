@@ -12,9 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-variable "name" {
-  description = "Name to assign to the controller."
+variable "agent_version" {
+  description = "Controller agent version to bootstrap. If null, the latest stable version is used."
   type        = string
+  default     = null
+  nullable    = true
+}
+
+variable "bootstrap_base" {
+  description = "Base operating system for the bootstrap machine."
+  type        = string
+  default     = "ubuntu@24.04"
+  nullable    = false
+}
+
+variable "bootstrap_constraints" {
+  description = "Constraints for the bootstrap machine."
+  type        = map(string)
+  default     = {}
   nullable    = false
 }
 
@@ -48,6 +63,13 @@ variable "cloud_credential" {
   sensitive = true
 }
 
+variable "controller_config" {
+  description = "Configuration options for the bootstrapped controller."
+  type        = map(string)
+  default     = {}
+  nullable    = false
+}
+
 variable "juju_binary" {
   description = "Path to the Juju CLI binary. Use /snap/juju/current/bin/juju when Juju is installed as a snap."
   type        = string
@@ -55,30 +77,21 @@ variable "juju_binary" {
   nullable    = false
 }
 
-variable "bootstrap_base" {
-  description = "Base operating system for the bootstrap machine."
-  type        = string
-  default     = "ubuntu@24.04"
-  nullable    = false
-}
-
-variable "agent_version" {
-  description = "Controller agent version to bootstrap. If null, the latest stable version is used."
+variable "juju_data_dir" {
+  description = <<-EOT
+    Directory where the Juju data files (controllers.yaml and accounts.yaml) are
+    written. Setting this variable opts in to writing them: point the JUJU_DATA
+    environment variable at the directory to use the Juju CLI with the
+    controller. If null, no Juju data files are written and only the connection
+    outputs are available. Existing files with the same names are overwritten.
+  EOT
   type        = string
   default     = null
   nullable    = true
 }
 
-variable "bootstrap_constraints" {
-  description = "Constraints for the bootstrap machine."
-  type        = map(string)
-  default     = {}
-  nullable    = false
-}
-
-variable "controller_config" {
-  description = "Configuration options for the bootstrapped controller."
-  type        = map(string)
-  default     = {}
+variable "name" {
+  description = "Name to assign to the controller."
+  type        = string
   nullable    = false
 }

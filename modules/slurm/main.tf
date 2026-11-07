@@ -1,4 +1,4 @@
-# Copyright 2025 Canonical Ltd.
+# Copyright 2026 Canonical Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,13 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-locals {
-  controller_machines = length(var.controller.machines) == 0
-  database_machines   = length(var.database.machines) == 0
-  rest_api_machines   = length(var.rest_api.machines) == 0
-  kiosk_machines      = length(var.kiosk.machines) == 0
-}
 
 # slurmdbd and slurmrestd do not support HA setups
 resource "terraform_data" "single_unit_services" {
@@ -38,112 +31,60 @@ module "slurmctld" {
   source = "git::https://github.com/canonical/slurm-charms//charms/slurmctld/terraform?ref=9943f751b39268c24167ccddf9dc7145ce69cdae"
 
   model_uuid = var.model_uuid
-  app_name   = var.controller.app_name
-  base       = var.base
+  app_name   = local.controller.app_name
+  base       = local.controller.base
 
-  channel     = var.channel
-  machines    = local.controller_machines ? null : var.controller.machines
-  units       = local.controller_machines ? coalesce(var.controller.units, 1) : null
-  config      = var.controller.config
-  constraints = var.controller.constraints
+  channel     = local.controller.channel
+  revision    = local.controller.revision
+  machines    = local.controller.machines
+  units       = local.controller.units
+  config      = local.controller.config
+  constraints = local.controller.constraints
 }
 
 module "slurmdbd" {
   source = "git::https://github.com/canonical/slurm-charms//charms/slurmdbd/terraform?ref=9943f751b39268c24167ccddf9dc7145ce69cdae"
 
   model_uuid = var.model_uuid
-  app_name   = var.database.app_name
-  base       = var.base
+  app_name   = local.database.app_name
+  base       = local.database.base
 
-  channel     = var.channel
-  machines    = local.database_machines ? null : var.database.machines
-  units       = local.database_machines ? coalesce(var.database.units, 1) : null
-  config      = var.database.config
-  constraints = var.database.constraints
+  channel     = local.database.channel
+  revision    = local.database.revision
+  machines    = local.database.machines
+  units       = local.database.units
+  config      = local.database.config
+  constraints = local.database.constraints
 }
 
 module "slurmrestd" {
   source = "git::https://github.com/canonical/slurm-charms//charms/slurmrestd/terraform?ref=9943f751b39268c24167ccddf9dc7145ce69cdae"
 
   model_uuid = var.model_uuid
-  app_name   = var.rest_api.app_name
-  base       = var.base
+  app_name   = local.rest_api.app_name
+  base       = local.rest_api.base
 
-  channel     = var.channel
-  machines    = local.rest_api_machines ? null : var.rest_api.machines
-  units       = local.rest_api_machines ? coalesce(var.rest_api.units, 1) : null
-  config      = var.rest_api.config
-  constraints = var.rest_api.constraints
+  channel     = local.rest_api.channel
+  revision    = local.rest_api.revision
+  machines    = local.rest_api.machines
+  units       = local.rest_api.units
+  config      = local.rest_api.config
+  constraints = local.rest_api.constraints
 }
 
 module "sackd" {
   source = "git::https://github.com/canonical/slurm-charms//charms/sackd/terraform?ref=9943f751b39268c24167ccddf9dc7145ce69cdae"
 
   model_uuid = var.model_uuid
-  app_name   = var.kiosk.app_name
-  base       = var.base
+  app_name   = local.kiosk.app_name
+  base       = local.kiosk.base
 
-  channel     = var.channel
-  machines    = local.kiosk_machines ? null : var.kiosk.machines
-  units       = local.kiosk_machines ? coalesce(var.kiosk.units, 1) : null
-  config      = var.kiosk.config
-  constraints = var.kiosk.constraints
-}
-
-resource "juju_integration" "sackd-to-slurmctld" {
-  model_uuid = var.model_uuid
-
-  application {
-    name     = module.sackd.application.name
-    endpoint = module.sackd.provides.slurmctld
-  }
-
-  application {
-    name     = module.slurmctld.application.name
-    endpoint = module.slurmctld.requires.sackd
-  }
-}
-
-resource "juju_integration" "slurmdbd-to-slurmctld" {
-  model_uuid = var.model_uuid
-
-  application {
-    name     = module.slurmdbd.application.name
-    endpoint = module.slurmdbd.provides.slurmctld
-  }
-
-  application {
-    name     = module.slurmctld.application.name
-    endpoint = module.slurmctld.requires.slurmdbd
-  }
-}
-
-resource "juju_integration" "slurmrestd-to-slurmctld" {
-  model_uuid = var.model_uuid
-
-  application {
-    name     = module.slurmrestd.application.name
-    endpoint = module.slurmrestd.provides.slurmctld
-  }
-
-  application {
-    name     = module.slurmctld.application.name
-    endpoint = module.slurmctld.requires.slurmrestd
-  }
-}
-
-resource "juju_integration" "slurmdbd-to-mysql" {
-  model_uuid = var.model_uuid
-
-  application {
-    name     = module.slurmdbd.application.name
-    endpoint = module.slurmdbd.requires.database
-  }
-
-  application {
-    name     = var.database_backend.name
-    endpoint = var.database_backend.endpoint
-  }
+  channel     = local.kiosk.channel
+  revision    = local.kiosk.revision
+  machines    = local.kiosk.machines
+  units       = local.kiosk.units
+  config      = local.kiosk.config
+  constraints = local.kiosk.constraints
 }
 
 # Setup compute plane
@@ -153,27 +94,13 @@ module "slurmd_partitions" {
   source   = "git::https://github.com/canonical/slurm-charms//charms/slurmd/terraform?ref=9943f751b39268c24167ccddf9dc7145ce69cdae"
 
   model_uuid = var.model_uuid
-  app_name   = each.key
-  base       = var.base
+  app_name   = local.compute_partitions[each.key].app_name
+  base       = local.compute_partitions[each.key].base
 
-  channel     = var.channel
-  machines    = length(each.value.machines) == 0 ? null : each.value.machines
-  units       = length(each.value.machines) == 0 ? coalesce(each.value.units, 1) : null
-  config      = each.value.config
-  constraints = each.value.constraints
-}
-
-resource "juju_integration" "slurmd-to-slurmctld" {
-  for_each   = module.slurmd_partitions
-  model_uuid = var.model_uuid
-
-  application {
-    name     = each.value.application.name
-    endpoint = each.value.provides.slurmctld
-  }
-
-  application {
-    name     = module.slurmctld.application.name
-    endpoint = module.slurmctld.requires.slurmd
-  }
+  channel     = local.compute_partitions[each.key].channel
+  revision    = local.compute_partitions[each.key].revision
+  machines    = local.compute_partitions[each.key].machines
+  units       = local.compute_partitions[each.key].units
+  config      = local.compute_partitions[each.key].config
+  constraints = local.compute_partitions[each.key].constraints
 }

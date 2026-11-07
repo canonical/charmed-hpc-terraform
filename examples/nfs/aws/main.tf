@@ -4,7 +4,7 @@ terraform {
   required_providers {
     juju = {
       source  = "juju/juju"
-      version = "~> 1.0"
+      version = ">= 1.0, < 3.0"
     }
     aws = {
       source  = "hashicorp/aws"
@@ -32,20 +32,6 @@ data "aws_availability_zones" "available" {
 
 data "aws_vpc" "controller" {
   id = var.controller_vpc_id
-}
-
-data "aws_subnets" "controller" {
-  filter {
-    name   = "vpc-id"
-    values = [data.aws_vpc.controller.id]
-  }
-}
-
-data "aws_internet_gateway" "controller" {
-  filter {
-    name   = "attachment.vpc-id"
-    values = [data.aws_vpc.controller.id]
-  }
 }
 
 data "aws_route_tables" "controller" {

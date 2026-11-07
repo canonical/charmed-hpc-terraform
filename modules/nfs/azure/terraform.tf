@@ -18,7 +18,15 @@ terraform {
   required_providers {
     juju = {
       source  = "juju/juju"
-      version = "~> 1.0"
+      version = ">= 1.0, < 3.0"
+    }
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~>4.17"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.0"
     }
   }
 }
