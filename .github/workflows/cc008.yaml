@@ -1,0 +1,16 @@
+# Copyright 2026 Canonical Ltd.
+# See LICENSE file for licensing details.
+
+name: Terraform modules compliance
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  compliance:
+    name: Terraform modules compliance
+    uses: canonical/operator-workflows/.github/workflows/terraform_modules_compliance.yaml@95c819190372baf8338f3ed15b80ba76ec881136 # main
+    with:
+      terraform-directories: '["modules/slurm", "modules/lustre", "modules/nfs/aws", "modules/nfs/azure", "modules/nfs/gcp"]'
