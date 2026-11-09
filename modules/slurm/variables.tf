@@ -76,6 +76,11 @@ variable "database" {
   })
   nullable = false
   default  = {}
+
+  validation {
+    condition     = coalesce(var.database.units, 1) <= 1 && length(var.database.machines) <= 1
+    error_message = "The Slurm database charm (slurmdbd) does not support HA setups and must be deployed with at most one unit or machine."
+  }
 }
 
 variable "database_backend" {
@@ -93,6 +98,16 @@ variable "database_backend" {
     offering_controller = optional(string),
   })
   nullable = false
+
+  validation {
+    condition     = (var.database_backend.name != null) != (var.database_backend.offer_url != null)
+    error_message = "Set exactly one of `name` (in-model database application) or `offer_url` (cross-model offer)."
+  }
+
+  validation {
+    condition     = var.database_backend.offering_controller == null || var.database_backend.offer_url != null
+    error_message = "`offering_controller` may only be set together with `offer_url`."
+  }
 }
 
 variable "kiosk" {
@@ -126,6 +141,11 @@ variable "offered_endpoints" {
   EOT
   type        = list(string)
   default     = []
+
+  validation {
+    condition     = alltrue([for key in var.offered_endpoints : contains(keys(local.offerable_endpoints), key)])
+    error_message = "Each element of `offered_endpoints` must be a valid offerable endpoint."
+  }
 }
 
 variable "rest_api" {
@@ -142,4 +162,9 @@ variable "rest_api" {
   })
   nullable = false
   default  = {}
+
+  validation {
+    condition     = coalesce(var.rest_api.units, 1) <= 1 && length(var.rest_api.machines) <= 1
+    error_message = "The Slurm REST API charm (slurmrestd) does not support HA setups and must be deployed with at most one unit or machine."
+  }
 }
