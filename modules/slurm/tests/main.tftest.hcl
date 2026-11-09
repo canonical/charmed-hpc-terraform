@@ -20,7 +20,7 @@ run "defaults" {
 
   variables {
     model_uuid       = "00000000-0000-0000-0000-000000000000"
-    database_backend = { name = "mysql", endpoint = "database" }
+    slurmdbd_backend = { name = "mysql", endpoint = "database" }
   }
 
   assert {
@@ -41,9 +41,9 @@ run "offer_valid_endpoint" {
   command = plan
 
   variables {
-    model_uuid        = "00000000-0000-0000-0000-000000000000"
-    database_backend  = { offer_url = "admin/model.database" }
-    offered_endpoints = ["sackd_metrics_endpoint", "slurmctld_influxdb", "slurmctld_smtp"]
+    model_uuid       = "00000000-0000-0000-0000-000000000000"
+    slurmdbd_backend = { offer_url = "admin/model.database" }
+    expose_endpoints = ["sackd_metrics_endpoint", "slurmctld_influxdb", "slurmctld_smtp"]
   }
 
   assert {
@@ -58,60 +58,60 @@ run "offer_non_offerable_endpoint" {
   command = plan
 
   variables {
-    model_uuid        = "00000000-0000-0000-0000-000000000000"
-    database_backend  = { name = "mysql" }
-    offered_endpoints = ["slurmctld_cos_agent"]
+    model_uuid       = "00000000-0000-0000-0000-000000000000"
+    slurmdbd_backend = { name = "mysql" }
+    expose_endpoints = ["slurmctld_cos_agent"]
   }
 
-  expect_failures = [var.offered_endpoints]
+  expect_failures = [var.expose_endpoints]
 }
 
 # `name` and `offer_url` are mutually exclusive.
-run "database_backend_name_and_offer_url" {
+run "slurmdbd_backend_name_and_offer_url" {
   command = plan
 
   variables {
     model_uuid       = "00000000-0000-0000-0000-000000000000"
-    database_backend = { name = "mysql", offer_url = "admin/model.database" }
+    slurmdbd_backend = { name = "mysql", offer_url = "admin/model.database" }
   }
 
-  expect_failures = [var.database_backend]
+  expect_failures = [var.slurmdbd_backend]
 }
 
 # `offering_controller` only makes sense together with `offer_url`.
-run "database_backend_controller_without_offer_url" {
+run "slurmdbd_backend_controller_without_offer_url" {
   command = plan
 
   variables {
     model_uuid       = "00000000-0000-0000-0000-000000000000"
-    database_backend = { name = "mysql", offering_controller = "other-controller" }
+    slurmdbd_backend = { name = "mysql", offering_controller = "other-controller" }
   }
 
-  expect_failures = [var.database_backend]
+  expect_failures = [var.slurmdbd_backend]
 }
 
 # slurmdbd does not support HA setups.
-run "database_ha_rejected" {
+run "slurmdbd_ha_rejected" {
   command = plan
 
   variables {
     model_uuid       = "00000000-0000-0000-0000-000000000000"
-    database_backend = { name = "mysql" }
-    database         = { units = 2 }
+    slurmdbd_backend = { name = "mysql" }
+    slurmdbd         = { units = 2 }
   }
 
-  expect_failures = [var.database]
+  expect_failures = [var.slurmdbd]
 }
 
 # slurmrestd does not support HA setups.
-run "rest_api_ha_rejected" {
+run "slurmrestd_ha_rejected" {
   command = plan
 
   variables {
     model_uuid       = "00000000-0000-0000-0000-000000000000"
-    database_backend = { name = "mysql" }
-    rest_api         = { machines = ["0", "1"] }
+    slurmdbd_backend = { name = "mysql" }
+    slurmrestd       = { machines = ["0", "1"] }
   }
 
-  expect_failures = [var.rest_api]
+  expect_failures = [var.slurmrestd]
 }

@@ -26,8 +26,62 @@ variable "channel" {
   nullable    = false
 }
 
-variable "compute_partitions" {
-  description = "Map of Slurm compute partitions to deploy."
+variable "expose_endpoints" {
+  description = <<-EOT
+    Endpoints to expose as cross-model offers, identified by the
+    `<charm_name>_<endpoint>` keys of the `provides` and `requires` outputs.
+    Subordinate and container-scoped endpoints cannot be offered, and neither
+    can applications deployed per partition (`slurmd`).
+  EOT
+  type        = list(string)
+  default     = []
+
+  validation {
+    condition     = alltrue([for key in var.expose_endpoints : contains(keys(local.offerable_endpoints), key)])
+    error_message = "Each element of `expose_endpoints` must be a valid offerable endpoint."
+  }
+}
+
+variable "model_uuid" {
+  description = "UUID of the target Juju model."
+  type        = string
+  nullable    = false
+}
+
+variable "sackd" {
+  description = "Configuration options for the Slurm client daemon (sackd)."
+  type = object({
+    app_name    = optional(string, "sackd"),
+    base        = optional(string),
+    channel     = optional(string),
+    revision    = optional(number),
+    units       = optional(number),
+    config      = optional(map(string)),
+    constraints = optional(string),
+    machines    = optional(list(string), [])
+  })
+  nullable = false
+  default  = {}
+}
+
+variable "slurmctld" {
+  description = "Configuration options for the Slurm controller daemon (slurmctld)."
+  type = object({
+    app_name    = optional(string, "slurmctld"),
+    base        = optional(string),
+    channel     = optional(string),
+    revision    = optional(number),
+    units       = optional(number),
+    config      = optional(map(string)),
+    constraints = optional(string),
+    machines    = optional(list(string), [])
+  })
+  nullable = false
+  default  = {}
+}
+
+variable "slurmd_partitions" {
+  description = "Map of Slurm partitions to deploy, keyed by partition name. Each entry deploys a slurmd application."
   type = map(
     object({
       base        = optional(string),
@@ -46,26 +100,10 @@ variable "compute_partitions" {
   }
 }
 
-variable "controller" {
-  description = "Configuration options for the Slurm controller node."
+variable "slurmdbd" {
+  description = "Configuration options for the Slurm database daemon (slurmdbd)."
   type = object({
-    app_name    = optional(string, "controller"),
-    base        = optional(string),
-    channel     = optional(string),
-    revision    = optional(number),
-    units       = optional(number),
-    config      = optional(map(string)),
-    constraints = optional(string),
-    machines    = optional(list(string), [])
-  })
-  nullable = false
-  default  = {}
-}
-
-variable "database" {
-  description = "Configuration options for the Slurm database node."
-  type = object({
-    app_name    = optional(string, "database"),
+    app_name    = optional(string, "slurmdbd"),
     base        = optional(string),
     channel     = optional(string),
     revision    = optional(number),
@@ -78,12 +116,12 @@ variable "database" {
   default  = {}
 
   validation {
-    condition     = coalesce(var.database.units, 1) <= 1 && length(var.database.machines) <= 1
+    condition     = coalesce(var.slurmdbd.units, 1) <= 1 && length(var.slurmdbd.machines) <= 1
     error_message = "The Slurm database charm (slurmdbd) does not support HA setups and must be deployed with at most one unit or machine."
   }
 }
 
-variable "database_backend" {
+variable "slurmdbd_backend" {
   description = <<-EOT
     MySQL-compatible database backend for the Slurm accounting stack. Set
     `name` (and `endpoint` only when the application needs disambiguation) to
@@ -100,58 +138,20 @@ variable "database_backend" {
   nullable = false
 
   validation {
-    condition     = (var.database_backend.name != null) != (var.database_backend.offer_url != null)
+    condition     = (var.slurmdbd_backend.name != null) != (var.slurmdbd_backend.offer_url != null)
     error_message = "Set exactly one of `name` (in-model database application) or `offer_url` (cross-model offer)."
   }
 
   validation {
-    condition     = var.database_backend.offering_controller == null || var.database_backend.offer_url != null
+    condition     = var.slurmdbd_backend.offering_controller == null || var.slurmdbd_backend.offer_url != null
     error_message = "`offering_controller` may only be set together with `offer_url`."
   }
 }
 
-variable "kiosk" {
-  description = "Configuration options for the Slurm kiosk node."
+variable "slurmrestd" {
+  description = "Configuration options for the Slurm REST daemon (slurmrestd)."
   type = object({
-    app_name    = optional(string, "login-node"),
-    base        = optional(string),
-    channel     = optional(string),
-    revision    = optional(number),
-    units       = optional(number),
-    config      = optional(map(string)),
-    constraints = optional(string),
-    machines    = optional(list(string), [])
-  })
-  nullable = false
-  default  = {}
-}
-
-variable "model_uuid" {
-  description = "UUID of the target Juju model."
-  type        = string
-  nullable    = false
-}
-
-variable "offered_endpoints" {
-  description = <<-EOT
-    Endpoints to expose as cross-model offers, identified by the
-    `<charm_name>_<endpoint>` keys of the `provides` and `requires` outputs.
-    Subordinate and container-scoped endpoints cannot be offered, and neither
-    can applications deployed per partition (`slurmd`).
-  EOT
-  type        = list(string)
-  default     = []
-
-  validation {
-    condition     = alltrue([for key in var.offered_endpoints : contains(keys(local.offerable_endpoints), key)])
-    error_message = "Each element of `offered_endpoints` must be a valid offerable endpoint."
-  }
-}
-
-variable "rest_api" {
-  description = "Configuration options for the Slurm REST API node."
-  type = object({
-    app_name    = optional(string, "rest-api"),
+    app_name    = optional(string, "slurmrestd"),
     base        = optional(string),
     channel     = optional(string),
     revision    = optional(number),
@@ -164,7 +164,7 @@ variable "rest_api" {
   default  = {}
 
   validation {
-    condition     = coalesce(var.rest_api.units, 1) <= 1 && length(var.rest_api.machines) <= 1
+    condition     = coalesce(var.slurmrestd.units, 1) <= 1 && length(var.slurmrestd.machines) <= 1
     error_message = "The Slurm REST API charm (slurmrestd) does not support HA setups and must be deployed with at most one unit or machine."
   }
 }

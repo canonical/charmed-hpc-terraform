@@ -23,52 +23,6 @@ locals {
     { for name, partition in module.slurmd_partitions : name => partition.application }
   )
 
-  compute_partitions = {
-    for name, partition in var.compute_partitions : name => {
-      app_name    = name
-      base        = coalesce(partition.base, var.base)
-      channel     = coalesce(partition.channel, var.channel)
-      revision    = partition.revision
-      units       = length(partition.machines) == 0 ? coalesce(partition.units, 1) : null
-      machines    = length(partition.machines) == 0 ? null : partition.machines
-      config      = partition.config
-      constraints = partition.constraints
-    }
-  }
-
-  controller = {
-    app_name    = var.controller.app_name
-    base        = coalesce(var.controller.base, var.base)
-    channel     = coalesce(var.controller.channel, var.channel)
-    revision    = var.controller.revision
-    units       = length(var.controller.machines) == 0 ? coalesce(var.controller.units, 1) : null
-    machines    = length(var.controller.machines) == 0 ? null : var.controller.machines
-    config      = var.controller.config
-    constraints = var.controller.constraints
-  }
-
-  database = {
-    app_name    = var.database.app_name
-    base        = coalesce(var.database.base, var.base)
-    channel     = coalesce(var.database.channel, var.channel)
-    revision    = var.database.revision
-    units       = length(var.database.machines) == 0 ? coalesce(var.database.units, 1) : null
-    machines    = length(var.database.machines) == 0 ? null : var.database.machines
-    config      = var.database.config
-    constraints = var.database.constraints
-  }
-
-  kiosk = {
-    app_name    = var.kiosk.app_name
-    base        = coalesce(var.kiosk.base, var.base)
-    channel     = coalesce(var.kiosk.channel, var.channel)
-    revision    = var.kiosk.revision
-    units       = length(var.kiosk.machines) == 0 ? coalesce(var.kiosk.units, 1) : null
-    machines    = length(var.kiosk.machines) == 0 ? null : var.kiosk.machines
-    config      = var.kiosk.config
-    constraints = var.kiosk.constraints
-  }
-
   offerable_endpoints = {
     sackd_metrics_endpoint = {
       application = module.sackd.application.name
@@ -84,14 +38,60 @@ locals {
     }
   }
 
-  rest_api = {
-    app_name    = var.rest_api.app_name
-    base        = coalesce(var.rest_api.base, var.base)
-    channel     = coalesce(var.rest_api.channel, var.channel)
-    revision    = var.rest_api.revision
-    units       = length(var.rest_api.machines) == 0 ? coalesce(var.rest_api.units, 1) : null
-    machines    = length(var.rest_api.machines) == 0 ? null : var.rest_api.machines
-    config      = var.rest_api.config
-    constraints = var.rest_api.constraints
+  sackd = {
+    app_name    = var.sackd.app_name
+    base        = coalesce(var.sackd.base, var.base)
+    channel     = coalesce(var.sackd.channel, var.channel)
+    revision    = var.sackd.revision
+    units       = length(var.sackd.machines) == 0 ? coalesce(var.sackd.units, 1) : null
+    machines    = length(var.sackd.machines) == 0 ? null : var.sackd.machines
+    config      = var.sackd.config
+    constraints = var.sackd.constraints
+  }
+
+  slurmctld = {
+    app_name    = var.slurmctld.app_name
+    base        = coalesce(var.slurmctld.base, var.base)
+    channel     = coalesce(var.slurmctld.channel, var.channel)
+    revision    = var.slurmctld.revision
+    units       = length(var.slurmctld.machines) == 0 ? coalesce(var.slurmctld.units, 1) : null
+    machines    = length(var.slurmctld.machines) == 0 ? null : var.slurmctld.machines
+    config      = var.slurmctld.config
+    constraints = var.slurmctld.constraints
+  }
+
+  slurmd_partitions = {
+    for name, partition in var.slurmd_partitions : name => {
+      app_name    = name
+      base        = coalesce(partition.base, var.base)
+      channel     = coalesce(partition.channel, var.channel)
+      revision    = partition.revision
+      units       = length(partition.machines) == 0 ? coalesce(partition.units, 1) : null
+      machines    = length(partition.machines) == 0 ? null : partition.machines
+      config      = partition.config
+      constraints = partition.constraints
+    }
+  }
+
+  slurmdbd = {
+    app_name    = var.slurmdbd.app_name
+    base        = coalesce(var.slurmdbd.base, var.base)
+    channel     = coalesce(var.slurmdbd.channel, var.channel)
+    revision    = var.slurmdbd.revision
+    units       = length(var.slurmdbd.machines) == 0 ? coalesce(var.slurmdbd.units, 1) : null
+    machines    = length(var.slurmdbd.machines) == 0 ? null : var.slurmdbd.machines
+    config      = var.slurmdbd.config
+    constraints = var.slurmdbd.constraints
+  }
+
+  slurmrestd = {
+    app_name    = var.slurmrestd.app_name
+    base        = coalesce(var.slurmrestd.base, var.base)
+    channel     = coalesce(var.slurmrestd.channel, var.channel)
+    revision    = var.slurmrestd.revision
+    units       = length(var.slurmrestd.machines) == 0 ? coalesce(var.slurmrestd.units, 1) : null
+    machines    = length(var.slurmrestd.machines) == 0 ? null : var.slurmrestd.machines
+    config      = var.slurmrestd.config
+    constraints = var.slurmrestd.constraints
   }
 }
