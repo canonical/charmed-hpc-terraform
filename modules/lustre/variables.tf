@@ -32,19 +32,21 @@ variable "client" {
   nullable = false
 }
 
+variable "expose_endpoints" {
+  description = <<-EOT
+    Endpoints to expose as cross-model offers, identified by the
+    `<charm_name>_<endpoint>` keys of the `provides` and `requires` outputs.
+    Only `lustre_server_filesystem` can be offered; subordinate and
+    container-scoped endpoints cannot participate in cross-model relations.
+  EOT
+  type        = list(string)
+  default     = []
+}
+
 variable "model_uuid" {
   description = "UUID of the target Juju model."
   type        = string
   nullable    = false
-}
-
-variable "offered_endpoints" {
-  description = <<-EOT
-    Endpoints to expose as cross-model offers, identified by the
-    `<charm_name>_<endpoint>` keys of the `provides` and `requires` outputs.
-  EOT
-  type        = list(string)
-  default     = []
 }
 
 variable "server" {

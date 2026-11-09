@@ -1,4 +1,4 @@
-# Copyright 2026 Canonical Ltd.
+# Copyright 2025 Canonical Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,5 +13,27 @@
 # limitations under the License.
 
 locals {
+  filesystem_client = {
+    app_name = coalesce(var.filesystem_client.app_name, "${var.name}-client")
+    base     = coalesce(var.filesystem_client.base, var.base)
+    channel  = var.filesystem_client.channel
+    revision = var.filesystem_client.revision
+    config   = merge({ mountpoint = var.mountpoint }, var.filesystem_client.config)
+  }
+
+  nfs_server_proxy = {
+    app_name    = coalesce(var.nfs_server_proxy.app_name, "${var.name}-server")
+    base        = coalesce(var.nfs_server_proxy.base, var.base)
+    channel     = var.nfs_server_proxy.channel
+    revision    = var.nfs_server_proxy.revision
+    constraints = var.nfs_server_proxy.constraints
+    config = merge({
+      "hostname" : google_filestore_instance.nfs.networks[0].ip_addresses[0]
+      "path" : "/${local.share_name}"
+    }, var.nfs_server_proxy.config)
+    machines = null
+    units    = null
+  }
+
   share_name = replace(substr(var.name, 0, 10), "-", "_")
 }

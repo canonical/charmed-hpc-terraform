@@ -28,11 +28,17 @@ variable "capacity_gb" {
   nullable    = false
 }
 
-variable "filesystem_client_channel" {
-  description = "Channel to deploy the filesystem-client charm from."
-  type        = string
-  default     = "latest/edge"
-  nullable    = false
+variable "filesystem_client" {
+  description = "Configuration options for the filesystem-client."
+  type = object({
+    app_name = optional(string)
+    base     = optional(string)
+    channel  = optional(string, "latest/edge")
+    revision = optional(number)
+    config   = optional(map(string), {})
+  })
+  nullable = false
+  default  = {}
 }
 
 variable "location" {
@@ -66,11 +72,18 @@ variable "network" {
   nullable    = false
 }
 
-variable "nfs_server_proxy_channel" {
-  description = "Channel to deploy the nfs-server-proxy charm from."
-  type        = string
-  default     = "latest/edge"
-  nullable    = false
+variable "nfs_server_proxy" {
+  description = "Configuration options for the nfs-server-proxy."
+  type = object({
+    app_name    = optional(string)
+    base        = optional(string)
+    channel     = optional(string, "latest/edge")
+    revision    = optional(number)
+    config      = optional(map(string), {})
+    constraints = optional(string)
+  })
+  nullable = false
+  default  = {}
 }
 
 variable "tier" {

@@ -41,11 +41,11 @@ corresponding proxy and client charms to mount the filesystem on Juju machines.
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_base"></a> [base](#input\_base) | Base operating system to deploy the NFS charms on. | `string` | `"ubuntu@26.04"` | no |
-| <a name="input_filesystem_client_channel"></a> [filesystem\_client\_channel](#input\_filesystem\_client\_channel) | Channel to deploy the filesystem-client charm from. | `string` | `"latest/edge"` | no |
+| <a name="input_filesystem_client"></a> [filesystem\_client](#input\_filesystem\_client) | Configuration options for the filesystem-client. | <pre>object({<br/>    app_name = optional(string)<br/>    base     = optional(string)<br/>    channel  = optional(string, "latest/edge")<br/>    revision = optional(number)<br/>    config   = optional(map(string), {})<br/>  })</pre> | `{}` | no |
 | <a name="input_model_uuid"></a> [model\_uuid](#input\_model\_uuid) | UUID of the target Juju model. | `string` | n/a | yes |
 | <a name="input_mountpoint"></a> [mountpoint](#input\_mountpoint) | Path to the directory where the NFS share will be mounted. | `string` | n/a | yes |
 | <a name="input_name"></a> [name](#input\_name) | Name for the exported NFS share and the prefix of all the related resources. | `string` | `"nfs-share"` | no |
-| <a name="input_nfs_server_proxy_channel"></a> [nfs\_server\_proxy\_channel](#input\_nfs\_server\_proxy\_channel) | Channel to deploy the nfs-server-proxy charm from. | `string` | `"latest/edge"` | no |
+| <a name="input_nfs_server_proxy"></a> [nfs\_server\_proxy](#input\_nfs\_server\_proxy) | Configuration options for the nfs-server-proxy. | <pre>object({<br/>    app_name    = optional(string)<br/>    base        = optional(string)<br/>    channel     = optional(string, "latest/edge")<br/>    revision    = optional(number)<br/>    config      = optional(map(string), {})<br/>    constraints = optional(string)<br/>  })</pre> | `{}` | no |
 | <a name="input_subnet_id"></a> [subnet\_id](#input\_subnet\_id) | Subnet ID where the NFS share will be allocated. | `string` | n/a | yes |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC ID for the resources created. | `string` | n/a | yes |
 

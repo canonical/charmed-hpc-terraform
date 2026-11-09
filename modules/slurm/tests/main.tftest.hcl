@@ -9,7 +9,7 @@ run "defaults" {
 
   variables {
     model_uuid       = "00000000-0000-0000-0000-000000000000"
-    database_backend = { name = "mysql", endpoint = "database" }
+    slurmdbd_backend = { name = "mysql", endpoint = "database" }
   }
 
   assert {

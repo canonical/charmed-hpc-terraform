@@ -19,10 +19,17 @@ variable "base" {
   nullable    = false
 }
 
-variable "filesystem_client_channel" {
-  description = "Channel to deploy the filesystem-client charm from."
-  type        = string
-  default     = "latest/edge"
+variable "filesystem_client" {
+  description = "Configuration options for the filesystem-client."
+  type = object({
+    app_name = optional(string)
+    base     = optional(string)
+    channel  = optional(string, "latest/edge")
+    revision = optional(number)
+    config   = optional(map(string), {})
+  })
+  nullable = false
+  default  = {}
 }
 
 variable "model_uuid" {
@@ -37,15 +44,23 @@ variable "mountpoint" {
 }
 
 variable "name" {
+  description = "Name for the exported NFS share and the prefix of all the related resources."
   type        = string
   default     = "nfs-share"
-  description = "Name for the exported NFS share and the prefix of all the related resources."
 }
 
-variable "nfs_server_proxy_channel" {
-  description = "Channel to deploy the nfs-server-proxy charm from."
-  type        = string
-  default     = "latest/edge"
+variable "nfs_server_proxy" {
+  description = "Configuration options for the nfs-server-proxy."
+  type = object({
+    app_name    = optional(string)
+    base        = optional(string)
+    channel     = optional(string, "latest/edge")
+    revision    = optional(number)
+    config      = optional(map(string), {})
+    constraints = optional(string)
+  })
+  nullable = false
+  default  = {}
 }
 
 variable "subnet_id" {
@@ -54,6 +69,6 @@ variable "subnet_id" {
 }
 
 variable "vpc_id" {
-  type        = string
   description = "VPC ID for the resources created."
+  type        = string
 }

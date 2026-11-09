@@ -37,34 +37,13 @@ module "slurm" {
   source = "../../modules/slurm"
 
   model_uuid = juju_model.charmed-hpc.uuid
-  database_backend = {
+  slurmdbd_backend = {
     name     = module.mysql.app_name,
     endpoint = module.mysql.provides.database
   }
 
-  # Optional settings for the controller node.
-  controller = {
-    app_name = "slurmctld"
-  }
-
-  # Optional settings for the database node.
-  database = {
-    app_name = "slurmdbd"
-  }
-
-  # Optional settings for the REST API node.
-  rest_api = {
-    app_name = "slurmrestd"
-  }
-
-  # Optional settings for the kiosk node.
-  kiosk = {
-    app_name = "sackd",
-    units    = 1,
-  }
-
-  # Compute partitions to be deployed.
-  compute_partitions = {
+  # Slurm partitions to be deployed.
+  slurmd_partitions = {
     "default" : {
       units = 1,
     },

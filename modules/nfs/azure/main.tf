@@ -94,15 +94,15 @@ resource "azurerm_private_dns_zone_virtual_network_link" "nfs" {
 module "nfs-server-proxy" {
   source = "git::https://github.com/canonical/filesystem-charms//charms/nfs-server-proxy/terraform?ref=0a49f1705d62e4fbb8c52360ad4b2372e8b64214"
 
-  app_name   = "${var.name}-server"
-  model_uuid = var.model_uuid
-  base       = var.base
-  channel    = var.nfs_server_proxy_channel
-  config = {
-    "hostname" : azurerm_storage_account.nfs.primary_file_host
-    "path" : "/${azurerm_storage_account.nfs.name}/${azurerm_storage_share.nfs.name}"
-    "force-v4" : "true"
-  }
+  app_name    = local.nfs_server_proxy.app_name
+  model_uuid  = var.model_uuid
+  base        = local.nfs_server_proxy.base
+  channel     = local.nfs_server_proxy.channel
+  revision    = local.nfs_server_proxy.revision
+  constraints = local.nfs_server_proxy.constraints
+  machines    = local.nfs_server_proxy.machines
+  units       = local.nfs_server_proxy.units
+  config      = local.nfs_server_proxy.config
 
   depends_on = [
     azurerm_private_endpoint.nfs
@@ -112,13 +112,12 @@ module "nfs-server-proxy" {
 module "filesystem-client" {
   source = "git::https://github.com/canonical/filesystem-charms//charms/filesystem-client/terraform?ref=0a49f1705d62e4fbb8c52360ad4b2372e8b64214"
 
-  app_name   = "${var.name}-client"
+  app_name   = local.filesystem_client.app_name
   model_uuid = var.model_uuid
-  base       = var.base
-  channel    = var.filesystem_client_channel
-  config = {
-    "mountpoint" : var.mountpoint
-  }
+  base       = local.filesystem_client.base
+  channel    = local.filesystem_client.channel
+  revision   = local.filesystem_client.revision
+  config     = local.filesystem_client.config
 }
 
 resource "juju_integration" "nfs" {

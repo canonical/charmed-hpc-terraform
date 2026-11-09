@@ -45,34 +45,29 @@ This is a Terraform module facilitating the deployment of the core components of
 | ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_base"></a> [base](#input\_base) | Base operating system to deploy the Slurm charms on. | `string` | `"ubuntu@26.04"` | no |
 | <a name="input_channel"></a> [channel](#input\_channel) | Channel to deploy the Slurm charms from. | `string` | `"latest/edge"` | no |
-| <a name="input_compute_partitions"></a> [compute\_partitions](#input\_compute\_partitions) | Map of Slurm compute partitions to deploy. | <pre>map(<br/>    object({<br/>      base        = optional(string),<br/>      channel     = optional(string),<br/>      revision    = optional(number),<br/>      units       = optional(number),<br/>      config      = optional(map(string)),<br/>      constraints = optional(string),<br/>      machines    = optional(list(string), [])<br/>    })<br/>  )</pre> | <pre>{<br/>  "compute": {<br/>    "units": 1<br/>  }<br/>}</pre> | no |
-| <a name="input_controller"></a> [controller](#input\_controller) | Configuration options for the Slurm controller node. | <pre>object({<br/>    app_name    = optional(string, "controller"),<br/>    base        = optional(string),<br/>    channel     = optional(string),<br/>    revision    = optional(number),<br/>    units       = optional(number),<br/>    config      = optional(map(string)),<br/>    constraints = optional(string),<br/>    machines    = optional(list(string), [])<br/>  })</pre> | `{}` | no |
-| <a name="input_database"></a> [database](#input\_database) | Configuration options for the Slurm database node. | <pre>object({<br/>    app_name    = optional(string, "database"),<br/>    base        = optional(string),<br/>    channel     = optional(string),<br/>    revision    = optional(number),<br/>    units       = optional(number),<br/>    config      = optional(map(string)),<br/>    constraints = optional(string),<br/>    machines    = optional(list(string), [])<br/>  })</pre> | `{}` | no |
-| <a name="input_database_backend"></a> [database\_backend](#input\_database\_backend) | MySQL-compatible database backend for the Slurm accounting stack. Set<br/>`name` (and `endpoint` only when the application needs disambiguation) to<br/>use an in-model application, or `offer_url` to use a cross-model offer.<br/>Set `offering_controller` when the offer is hosted on a different<br/>controller. | <pre>object({<br/>    name                = optional(string),<br/>    endpoint            = optional(string),<br/>    offer_url           = optional(string),<br/>    offering_controller = optional(string),<br/>  })</pre> | n/a | yes |
-| <a name="input_kiosk"></a> [kiosk](#input\_kiosk) | Configuration options for the Slurm kiosk node. | <pre>object({<br/>    app_name    = optional(string, "login-node"),<br/>    base        = optional(string),<br/>    channel     = optional(string),<br/>    revision    = optional(number),<br/>    units       = optional(number),<br/>    config      = optional(map(string)),<br/>    constraints = optional(string),<br/>    machines    = optional(list(string), [])<br/>  })</pre> | `{}` | no |
+| <a name="input_expose_endpoints"></a> [expose\_endpoints](#input\_expose\_endpoints) | Endpoints to expose as cross-model offers, identified by the<br/>`<charm_name>_<endpoint>` keys of the `provides` and `requires` outputs.<br/>Subordinate and container-scoped endpoints cannot be offered, and neither<br/>can applications deployed per partition (`slurmd`). | `list(string)` | `[]` | no |
 | <a name="input_model_uuid"></a> [model\_uuid](#input\_model\_uuid) | UUID of the target Juju model. | `string` | n/a | yes |
-| <a name="input_offered_endpoints"></a> [offered\_endpoints](#input\_offered\_endpoints) | Endpoints to expose as cross-model offers, identified by the<br/>`<charm_name>_<endpoint>` keys of the `provides` and `requires` outputs.<br/>Subordinate and container-scoped endpoints cannot be offered, and neither<br/>can applications deployed per partition (`slurmd`). | `list(string)` | `[]` | no |
-| <a name="input_rest_api"></a> [rest\_api](#input\_rest\_api) | Configuration options for the Slurm REST API node. | <pre>object({<br/>    app_name    = optional(string, "rest-api"),<br/>    base        = optional(string),<br/>    channel     = optional(string),<br/>    revision    = optional(number),<br/>    units       = optional(number),<br/>    config      = optional(map(string)),<br/>    constraints = optional(string),<br/>    machines    = optional(list(string), [])<br/>  })</pre> | `{}` | no |
+| <a name="input_sackd"></a> [sackd](#input\_sackd) | Configuration options for the Slurm client daemon (sackd). | <pre>object({<br/>    app_name    = optional(string, "sackd"),<br/>    base        = optional(string),<br/>    channel     = optional(string),<br/>    revision    = optional(number),<br/>    units       = optional(number),<br/>    config      = optional(map(string)),<br/>    constraints = optional(string),<br/>    machines    = optional(list(string), [])<br/>  })</pre> | `{}` | no |
+| <a name="input_slurmctld"></a> [slurmctld](#input\_slurmctld) | Configuration options for the Slurm controller daemon (slurmctld). | <pre>object({<br/>    app_name    = optional(string, "slurmctld"),<br/>    base        = optional(string),<br/>    channel     = optional(string),<br/>    revision    = optional(number),<br/>    units       = optional(number),<br/>    config      = optional(map(string)),<br/>    constraints = optional(string),<br/>    machines    = optional(list(string), [])<br/>  })</pre> | `{}` | no |
+| <a name="input_slurmd_partitions"></a> [slurmd\_partitions](#input\_slurmd\_partitions) | Map of Slurm partitions to deploy, keyed by partition name. Each entry deploys a slurmd application. | <pre>map(<br/>    object({<br/>      base        = optional(string),<br/>      channel     = optional(string),<br/>      revision    = optional(number),<br/>      units       = optional(number),<br/>      config      = optional(map(string)),<br/>      constraints = optional(string),<br/>      machines    = optional(list(string), [])<br/>    })<br/>  )</pre> | <pre>{<br/>  "compute": {<br/>    "units": 1<br/>  }<br/>}</pre> | no |
+| <a name="input_slurmdbd"></a> [slurmdbd](#input\_slurmdbd) | Configuration options for the Slurm database daemon (slurmdbd). | <pre>object({<br/>    app_name    = optional(string, "slurmdbd"),<br/>    base        = optional(string),<br/>    channel     = optional(string),<br/>    revision    = optional(number),<br/>    units       = optional(number),<br/>    config      = optional(map(string)),<br/>    constraints = optional(string),<br/>    machines    = optional(list(string), [])<br/>  })</pre> | `{}` | no |
+| <a name="input_slurmdbd_backend"></a> [slurmdbd\_backend](#input\_slurmdbd\_backend) | MySQL-compatible database backend for the Slurm accounting stack. Set<br/>`name` (and `endpoint` only when the application needs disambiguation) to<br/>use an in-model application, or `offer_url` to use a cross-model offer.<br/>Set `offering_controller` when the offer is hosted on a different<br/>controller. | <pre>object({<br/>    name                = optional(string),<br/>    endpoint            = optional(string),<br/>    offer_url           = optional(string),<br/>    offering_controller = optional(string),<br/>  })</pre> | n/a | yes |
+| <a name="input_slurmrestd"></a> [slurmrestd](#input\_slurmrestd) | Configuration options for the Slurm REST daemon (slurmrestd). | <pre>object({<br/>    app_name    = optional(string, "slurmrestd"),<br/>    base        = optional(string),<br/>    channel     = optional(string),<br/>    revision    = optional(number),<br/>    units       = optional(number),<br/>    config      = optional(map(string)),<br/>    constraints = optional(string),<br/>    machines    = optional(list(string), [])<br/>  })</pre> | `{}` | no |
 
 ## Outputs
 
 | Name | Description |
 | ---- | ----------- |
 | <a name="output_components"></a> [components](#output\_components) | Map of deployed applications, keyed by component name. Partition applications are keyed by partition name. |
-| <a name="output_compute_partitions"></a> [compute\_partitions](#output\_compute\_partitions) | Information about the Slurm compute partitions. |
-| <a name="output_controller"></a> [controller](#output\_controller) | Information about the Slurm controller application. |
-| <a name="output_database"></a> [database](#output\_database) | Information about the Slurm database application. |
-| <a name="output_kiosk"></a> [kiosk](#output\_kiosk) | Information about the Slurm kiosk application. |
 | <a name="output_offers"></a> [offers](#output\_offers) | Map of exposed cross-model offers, keyed by `<charm_name>_<endpoint>`. |
 | <a name="output_provides"></a> [provides](#output\_provides) | Map of provides endpoints available for external integration, keyed by `<charm_name>_<endpoint>`. |
 | <a name="output_requires"></a> [requires](#output\_requires) | Map of requires endpoints available for external integration, keyed by `<charm_name>_<endpoint>`. |
-| <a name="output_rest_api"></a> [rest\_api](#output\_rest\_api) | Information about the Slurm REST API application. |
 <!-- END_TF_DOCS -->
 
 ## Component configuration
 
-Each deployment option object (`controller`, `database`, `rest_api`, `kiosk`) and
-each entry of `compute_partitions` accepts the following keys:
+Each deployment option object (`sackd`, `slurmctld`, `slurmdbd`, `slurmrestd`) and
+each entry of `slurmd_partitions` accepts the following keys:
 
 | Name          | Type         | Description                                                                                     |
 |---------------|--------------|-------------------------------------------------------------------------------------------------|
@@ -85,7 +80,7 @@ each entry of `compute_partitions` accepts the following keys:
 | `revision`    | number       | Charm revision to deploy. Null deploys the latest revision on the given channel                 |
 | `units`       | number       | Number of units to deploy when no `machines` are provided (defaults to 1)                       |
 
-The `database_backend` object configures the MySQL-compatible database backing
+The `slurmdbd_backend` object configures the MySQL-compatible database backing
 the Slurm accounting stack. It accepts the following keys:
 
 | Name                  | Type   | Description                                                                    |
@@ -120,7 +115,7 @@ The `requires` output exposes the following endpoints:
 | `slurmctld_oci_runtime` | `oci-runtime` |
 | `slurmctld_smtp`        | `smtp`        |
 
-Set `offered_endpoints` to expose endpoints as cross-model offers, using the
+Set `expose_endpoints` to expose endpoints as cross-model offers, using the
 keys of the `provides` and `requires` outputs as identifiers. The `offers`
 output provides the resulting offer URLs for other models to consume. Endpoints
 whose only implementors are subordinate or container-scoped charms

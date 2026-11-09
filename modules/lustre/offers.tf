@@ -13,7 +13,7 @@
 # limitations under the License.
 
 resource "juju_offer" "offered" {
-  for_each = { for key in var.offered_endpoints : key => local.offerable_endpoints[key] }
+  for_each = { for key in var.expose_endpoints : key => local.offerable_endpoints[key] }
 
   model_uuid       = var.model_uuid
   application_name = each.value.application
