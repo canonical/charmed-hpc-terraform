@@ -23,12 +23,14 @@ permissions:
 jobs:
   ci:
     name: Charmed HPC CI
-    uses: canonical/hpc-team/.github/workflows/charmed-hpc-ci.yaml@main
+    uses: canonical/hpc-team/.github/workflows/charmed-hpc-ci.yaml@2d05bbcca9ce2d6d182e625fe55e0d018f2f98ab # main
     with:
-      run-test: false
+      run-test: true
       just-version: "1.58.0"
       setup-commands: |
         sudo snap install opentofu --classic --channel latest/stable
         sudo snap install terragrunt --classic --channel latest/stable
         sudo snap install terraform-docs
         sudo snap install tflint
+        # Authenticate tflint's GitHub API requests
+        echo "GITHUB_TOKEN=${{ github.token }}" >> "$GITHUB_ENV"

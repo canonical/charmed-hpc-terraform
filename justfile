@@ -70,6 +70,15 @@ docs:
         {{ terraform_docs }} markdown table --lockfile=false --output-file README.md --output-mode inject "${dir}"
     done
 
+# Initialize and test Terraform modules
+test:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    for dir in {{ default_module_list }}; do
+        {{ tofu }} -chdir="${dir}" init -backend=false
+        {{ tofu }} -chdir="${dir}" test
+    done
+
 # Apply formatting standards to project
 fmt:
     #!/usr/bin/env bash

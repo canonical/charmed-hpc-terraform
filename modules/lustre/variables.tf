@@ -45,6 +45,11 @@ variable "offered_endpoints" {
   EOT
   type        = list(string)
   default     = []
+
+  validation {
+    condition     = alltrue([for key in var.offered_endpoints : contains(keys(local.offerable_endpoints), key)])
+    error_message = "Each element of `offered_endpoints` must be a valid offerable endpoint."
+  }
 }
 
 variable "server" {

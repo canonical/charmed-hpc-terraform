@@ -52,7 +52,7 @@ No modules.
 | <a name="input_controller_config"></a> [controller\_config](#input\_controller\_config) | Configuration options for the bootstrapped controller. | `map(string)` | `{}` | no |
 | <a name="input_controller_name"></a> [controller\_name](#input\_controller\_name) | Name to assign to the controller. | `string` | n/a | yes |
 | <a name="input_juju_binary"></a> [juju\_binary](#input\_juju\_binary) | Path to the Juju CLI binary. Use /snap/juju/current/bin/juju when Juju is installed as a snap. | `string` | `"/snap/juju/current/bin/juju"` | no |
-| <a name="input_juju_data_dir"></a> [juju\_data\_dir](#input\_juju\_data\_dir) | Directory where the Juju data files (controllers.yaml and accounts.yaml) are<br/>  written. Setting this variable opts in to writing them: point the JUJU\_DATA<br/>  environment variable at the directory to use the Juju CLI with the<br/>  controller. If null, no Juju data files are written and only the connection<br/>  outputs are available. Existing files with the same names are overwritten.<br/>existing files with the same names are overwritten. | `string` | `null` | no |
+| <a name="input_juju_data_dir"></a> [juju\_data\_dir](#input\_juju\_data\_dir) | Directory where the Juju data files (controllers.yaml and accounts.yaml) are<br/>written. Setting this variable opts in to writing them: point the JUJU\_DATA<br/>environment variable at the directory to use the Juju CLI with the<br/>controller. If null, no Juju data files are written and only the connection<br/>outputs are available. Existing files with the same names are overwritten. | `string` | `null` | no |
 
 ## Outputs
 
@@ -73,7 +73,7 @@ No modules.
 module "controller" {
   source = "./modules/controller"
 
-  name    = "my-controller"
+  controller_name = "my-controller"
   cloud = {
     name       = "localhost"
     type       = "lxd"
