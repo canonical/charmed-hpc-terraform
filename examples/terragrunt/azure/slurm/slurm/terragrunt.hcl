@@ -35,34 +35,13 @@ dependency "mysql" {
 inputs = {
   model_uuid = dependency.infra.outputs.model_uuid
 
-  database_backend = {
+  slurmdbd_backend = {
     name     = dependency.mysql.outputs.app_name
     endpoint = dependency.mysql.outputs.provides.database
   }
 
-  # Optional settings for the controller node.
-  controller = {
-    app_name = "slurmctld"
-  }
-
-  # Optional settings for the database node.
-  database = {
-    app_name = "slurmdbd"
-  }
-
-  # Optional settings for the REST API node.
-  rest_api = {
-    app_name = "slurmrestd"
-  }
-
-  # Optional settings for the kiosk node.
-  kiosk = {
-    app_name = "sackd"
-    units    = 1
-  }
-
-  # Compute partitions to be deployed.
-  compute_partitions = {
+  # Slurm partitions to be deployed.
+  slurmd_partitions = {
     "cpu" : {
       units = 1,
     },

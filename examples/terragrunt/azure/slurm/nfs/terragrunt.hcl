@@ -36,21 +36,15 @@ dependency "slurm" {
   config_path = "../slurm"
 
   mock_outputs = {
-    controller = {
-      app_name = "slurmctld"
-    }
-    database = {
-      app_name = "slurmdbd"
-    }
-    rest_api = {
-      app_name = "slurmrestd"
-    }
-    kiosk = {
-      app_name = "sackd"
-    }
-    compute_partitions = {
-      default = { app_name = "default" }
-      gpu     = { app_name = "gpu" }
+    components = {
+      sackd      = { app_name = "sackd" }
+      slurmctld  = { app_name = "slurmctld" }
+      slurmdbd   = { app_name = "slurmdbd" }
+      slurmrestd = { app_name = "slurmrestd" }
+      slurmd = {
+        default = { app_name = "default" }
+        gpu     = { app_name = "gpu" }
+      }
     }
   }
   # Planning this unit needs real Azure resource names from infra, so mocks
@@ -66,9 +60,9 @@ inputs = {
   # Mount the share on every Slurm node.
   applications = concat(
     [
-      dependency.slurm.outputs.kiosk.app_name,
+      dependency.slurm.outputs.components.sackd.app_name,
     ],
-    [for partition in dependency.slurm.outputs.compute_partitions : partition.app_name],
+    [for partition in dependency.slurm.outputs.components.slurmd : partition.app_name],
   )
 }
 
