@@ -90,7 +90,6 @@ variable "juju_data_dir" {
     environment variable at the directory to use the Juju CLI with the
     controller. If null, no Juju data files are written and only the connection
     outputs are available. Existing files with the same names are overwritten.
-  existing files with the same names are overwritten.
   EOT
   type        = string
   default     = null

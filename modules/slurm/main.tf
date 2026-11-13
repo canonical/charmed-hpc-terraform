@@ -1,4 +1,4 @@
-# Copyright 2025 Canonical Ltd.
+# Copyright 2026 Canonical Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,21 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# slurmdbd and slurmrestd do not support HA setups
-resource "terraform_data" "single_unit_services" {
-  lifecycle {
-    precondition {
-      condition     = coalesce(var.database.units, 1) <= 1 && length(var.database.machines) <= 1
-      error_message = "The Slurm database charm (slurmdbd) does not support HA setups and must be deployed with at most one unit or machine."
-    }
-
-    precondition {
-      condition     = coalesce(var.rest_api.units, 1) <= 1 && length(var.rest_api.machines) <= 1
-      error_message = "The Slurm REST API charm (slurmrestd) does not support HA setups and must be deployed with at most one unit or machine."
-    }
-  }
-}
-
+# Slurm control plane
 module "slurmctld" {
   source = "git::https://github.com/canonical/slurm-charms//charms/slurmctld/terraform?ref=9943f751b39268c24167ccddf9dc7145ce69cdae"
 

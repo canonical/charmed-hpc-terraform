@@ -1,4 +1,4 @@
-# Copyright 2024-2025 Canonical Ltd.
+# Copyright 2024-2026 Canonical Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,11 +17,14 @@ set lists
 
 project_dir := justfile_directory()
 default_root_list := shell("find $1 -name '*.tf' -not -path '*/.terraform/*' -not -path '*/.terragrunt-cache/*' -not -path '*/terragrunt/*' -printf '%h\\n' | sort -u | tr '\\n' ' '", project_dir / "examples")
-default_stack_list := shell("find $1 -mindepth 2 -maxdepth 3 -name terragrunt.hcl -not -path '*/.terragrunt-cache/*' -printf '%h\\n' | xargs -r -n1 dirname | sort -u | tr '\\n' ' '", project_dir / "examples/terragrunt")
+default_stack_list := shell("find $1 -mindepth 2 -maxdepth 3 -name terragrunt.hcl -not -path '*/.terragrunt-cache/*' -printf '%h\\n' | sort -u | tr '\\n' ' '", project_dir / "examples/terragrunt")
+default_module_list := shell("find $1 -type f -name main.tf -not -path '*/.terraform/*' -printf '%h\\n' | sort -u | tr '\\n' ' '", project_dir / "modules")
 
 # Prefer OpenTofu, fall back to Terraform.
 tofu := which("tofu") || require("terraform")
 terragrunt := require("terragrunt")
+terraform_docs := require("terraform-docs")
+tflint := require("tflint")
 
 [private]
 default:
@@ -38,7 +41,7 @@ init:
         {{ terragrunt }} run --all init --working-dir ${stack} --non-interactive
     done
 
-# Check Terraform roots and Terragrunt stacks
+# Check Terraform roots, Terragrunt stacks, lint and docs
 check: init
     #!/usr/bin/env bash
     set -euo pipefail
@@ -50,6 +53,31 @@ check: init
         {{ terragrunt }} run --all validate --working-dir ${stack} --non-interactive
     done
     {{ terragrunt }} hcl format --check --non-interactive
+    {{ tflint }} --init
+    {{ tflint }} --recursive
+    for dir in {{ default_module_list }}; do
+        {{ terraform_docs }} markdown table --lockfile=false --output-file README.md --output-mode inject --output-check "${dir}" || {
+            echo "Terraform docs are out of date for ${dir}; run 'just docs'." >&2
+            exit 1
+        }
+    done
+
+# Regenerate Terraform module documentation
+docs:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    for dir in {{ default_module_list }}; do
+        {{ terraform_docs }} markdown table --lockfile=false --output-file README.md --output-mode inject "${dir}"
+    done
+
+# Initialize and test Terraform modules
+test:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    for dir in {{ default_module_list }}; do
+        {{ tofu }} -chdir="${dir}" init -backend=false
+        {{ tofu }} -chdir="${dir}" test
+    done
 
 # Apply formatting standards to project
 fmt:

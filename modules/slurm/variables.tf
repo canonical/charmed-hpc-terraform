@@ -1,4 +1,4 @@
-# Copyright 2025 Canonical Ltd.
+# Copyright 2025-2026 Canonical Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -76,15 +76,38 @@ variable "database" {
   })
   nullable = false
   default  = {}
+
+  validation {
+    condition     = coalesce(var.database.units, 1) <= 1 && length(var.database.machines) <= 1
+    error_message = "The Slurm database charm (slurmdbd) does not support HA setups and must be deployed with at most one unit or machine."
+  }
 }
 
 variable "database_backend" {
-  description = "Information about the charm application provisioning the Slurm database."
+  description = <<-EOT
+    MySQL-compatible database backend for the Slurm accounting stack. Set
+    `name` (and `endpoint` only when the application needs disambiguation) to
+    use an in-model application, or `offer_url` to use a cross-model offer.
+    Set `offering_controller` when the offer is hosted on a different
+    controller.
+  EOT
   type = object({
-    name     = string,
-    endpoint = string,
+    name                = optional(string),
+    endpoint            = optional(string),
+    offer_url           = optional(string),
+    offering_controller = optional(string),
   })
   nullable = false
+
+  validation {
+    condition     = (var.database_backend.name != null) != (var.database_backend.offer_url != null)
+    error_message = "Set exactly one of `name` (in-model database application) or `offer_url` (cross-model offer)."
+  }
+
+  validation {
+    condition     = var.database_backend.offering_controller == null || var.database_backend.offer_url != null
+    error_message = "`offering_controller` may only be set together with `offer_url`."
+  }
 }
 
 variable "kiosk" {
@@ -109,6 +132,22 @@ variable "model_uuid" {
   nullable    = false
 }
 
+variable "offered_endpoints" {
+  description = <<-EOT
+    Endpoints to expose as cross-model offers, identified by the
+    `<charm_name>_<endpoint>` keys of the `provides` and `requires` outputs.
+    Subordinate and container-scoped endpoints cannot be offered, and neither
+    can applications deployed per partition (`slurmd`).
+  EOT
+  type        = list(string)
+  default     = []
+
+  validation {
+    condition     = alltrue([for key in var.offered_endpoints : contains(keys(local.offerable_endpoints), key)])
+    error_message = "Each element of `offered_endpoints` must be a valid offerable endpoint."
+  }
+}
+
 variable "rest_api" {
   description = "Configuration options for the Slurm REST API node."
   type = object({
@@ -123,4 +162,9 @@ variable "rest_api" {
   })
   nullable = false
   default  = {}
+
+  validation {
+    condition     = coalesce(var.rest_api.units, 1) <= 1 && length(var.rest_api.machines) <= 1
+    error_message = "The Slurm REST API charm (slurmrestd) does not support HA setups and must be deployed with at most one unit or machine."
+  }
 }

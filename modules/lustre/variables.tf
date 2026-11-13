@@ -38,6 +38,20 @@ variable "model_uuid" {
   nullable    = false
 }
 
+variable "offered_endpoints" {
+  description = <<-EOT
+    Endpoints to expose as cross-model offers, identified by the
+    `<charm_name>_<endpoint>` keys of the `provides` and `requires` outputs.
+  EOT
+  type        = list(string)
+  default     = []
+
+  validation {
+    condition     = alltrue([for key in var.offered_endpoints : contains(keys(local.offerable_endpoints), key)])
+    error_message = "Each element of `offered_endpoints` must be a valid offerable endpoint."
+  }
+}
+
 variable "server" {
   description = "Configuration options for the Lustre server."
   type = object({
