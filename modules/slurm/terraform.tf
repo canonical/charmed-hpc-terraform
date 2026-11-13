@@ -13,7 +13,7 @@
 # limitations under the License.
 
 terraform {
-  required_version = ">= 1.6.6"
+  required_version = ">= 1.9.0"
 
   required_providers {
     juju = {

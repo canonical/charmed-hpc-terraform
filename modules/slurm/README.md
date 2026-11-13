@@ -7,7 +7,7 @@ This is a Terraform module facilitating the deployment of the core components of
 
 | Name | Version |
 | ---- | ------- |
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.6.6 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
 | <a name="requirement_juju"></a> [juju](#requirement\_juju) | >= 1.0, < 3.0 |
 
 ## Providers
@@ -15,7 +15,6 @@ This is a Terraform module facilitating the deployment of the core components of
 | Name | Version |
 | ---- | ------- |
 | <a name="provider_juju"></a> [juju](#provider\_juju) | >= 1.0, < 3.0 |
-| <a name="provider_terraform"></a> [terraform](#provider\_terraform) | n/a |
 
 ## Modules
 
@@ -37,7 +36,6 @@ This is a Terraform module facilitating the deployment of the core components of
 | [juju_integration.slurmdbd-to-slurmctld](https://registry.terraform.io/providers/juju/juju/latest/docs/resources/integration) | resource |
 | [juju_integration.slurmrestd-to-slurmctld](https://registry.terraform.io/providers/juju/juju/latest/docs/resources/integration) | resource |
 | [juju_offer.offered](https://registry.terraform.io/providers/juju/juju/latest/docs/resources/offer) | resource |
-| [terraform_data.single_unit_services](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 
 ## Inputs
 
