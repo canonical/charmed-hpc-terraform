@@ -45,7 +45,7 @@ run "offer_valid_endpoint" {
     client = {
       mountpoint = "/srv/lustre"
     }
-    offered_endpoints = ["lustre_server_filesystem"]
+    expose_endpoints = ["lustre_server_filesystem"]
   }
 
   assert {
@@ -64,10 +64,10 @@ run "offer_non_offerable_endpoint" {
     client = {
       mountpoint = "/srv/lustre"
     }
-    offered_endpoints = ["filesystem_client_mount"]
+    expose_endpoints = ["filesystem_client_mount"]
   }
 
-  expect_failures = [var.offered_endpoints]
+  expect_failures = [var.expose_endpoints]
 }
 
 # A typo'd endpoint key must fail validation instead of a raw indexing error.
@@ -79,8 +79,8 @@ run "offer_invalid_endpoint" {
     client = {
       mountpoint = "/srv/lustre"
     }
-    offered_endpoints = ["lustre_server_filesytem"]
+    expose_endpoints = ["lustre_server_filesytem"]
   }
 
-  expect_failures = [var.offered_endpoints]
+  expect_failures = [var.expose_endpoints]
 }

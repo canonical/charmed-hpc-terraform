@@ -49,8 +49,8 @@ filesystem.
 | ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_base"></a> [base](#input\_base) | Base operating system to deploy the Lustre charms on. | `string` | `"ubuntu@26.04"` | no |
 | <a name="input_client"></a> [client](#input\_client) | Configuration options for the filesystem client that mounts the Lustre share. | <pre>object({<br/>    app_name   = optional(string, "lustre-client")<br/>    base       = optional(string)<br/>    channel    = optional(string, "latest/edge")<br/>    config     = optional(map(string), {})<br/>    mountpoint = string<br/>    revision   = optional(number)<br/>  })</pre> | n/a | yes |
+| <a name="input_expose_endpoints"></a> [expose\_endpoints](#input\_expose\_endpoints) | Endpoints to expose as cross-model offers, identified by the<br/>`<charm_name>_<endpoint>` keys of the `provides` and `requires` outputs.<br/>Only `lustre_server_filesystem` can be offered; subordinate and<br/>container-scoped endpoints cannot participate in cross-model relations. | `list(string)` | `[]` | no |
 | <a name="input_model_uuid"></a> [model\_uuid](#input\_model\_uuid) | UUID of the target Juju model. | `string` | n/a | yes |
-| <a name="input_offered_endpoints"></a> [offered\_endpoints](#input\_offered\_endpoints) | Endpoints to expose as cross-model offers, identified by the<br/>`<charm_name>_<endpoint>` keys of the `provides` and `requires` outputs. | `list(string)` | `[]` | no |
 | <a name="input_server"></a> [server](#input\_server) | Configuration options for the Lustre server. | <pre>object({<br/>    app_name    = optional(string, "lustre-server")<br/>    base        = optional(string)<br/>    channel     = optional(string, "latest/edge")<br/>    config      = optional(map(string), {})<br/>    constraints = optional(string, "")<br/>    machines    = optional(list(string), [])<br/>    revision    = optional(number)<br/>    units       = optional(number, 1)<br/>  })</pre> | `{}` | no |
 
 ## Outputs
@@ -113,7 +113,7 @@ The `requires` output exposes the following endpoints:
 | `filesystem_client_juju_info`  | `juju-info`   |
 | `filesystem_client_mount`      | `mount`       |
 
-Set `offered_endpoints` to expose endpoints as cross-model offers, using the
+Set `expose_endpoints` to expose endpoints as cross-model offers, using the
 keys of the `provides` and `requires` outputs as identifiers. The `offers`
 output provides the resulting offer URLs for other models to consume. Only
 `lustre_server_filesystem` can be offered: subordinate and container-scoped
